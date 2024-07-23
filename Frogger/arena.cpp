@@ -1,5 +1,6 @@
 #include "precomp.h"
 
+#include "crocodile.h"
 #include "log.h"
 #include "turtle.h"
 
@@ -71,7 +72,8 @@ void Arena::loadLevel(int level)
     cars.push_back(std::make_shared<Car>(CarType::TRACTOR, -0.3f));
     cars.push_back(std::make_shared<Car>(CarType::RACER_2, 0.2f));
 
-    waterObjects.push_back(std::make_shared<Log>(LogSize::MEDIUM, 0.2f));
+    waterObjects.push_back(std::make_shared<Croc>(0.2f));
+    //waterObjects.push_back(std::make_shared<Log>(LogSize::MEDIUM, 0.2f));
     waterObjects.push_back(std::make_shared<Log>(LogSize::MEDIUM, 0.2f));
     waterObjects.back()->sprite.translate(glm::vec2(-0.5f * playArea.getWidth(), 0));
     waterObjects.push_back(std::make_shared<Log>(LogSize::LARGE, 0.3f));
@@ -90,6 +92,11 @@ void Arena::loadLevel(int level)
     waterObjects.push_back(std::make_shared<Turtle>(TurtlePod::TRIPLE, -0.2f, std::chrono::milliseconds(1000)));
     waterObjects.push_back(std::make_shared<Turtle>(TurtlePod::TRIPLE, -0.2f, std::chrono::milliseconds(0)));
     waterObjects.back()->sprite.translate(glm::vec2(-0.4f * playArea.getWidth(), 0));
+
+    for (auto& house : houses)
+    {
+        house.isOccupied = false;
+    }
 }
 
 void Arena::update(float deltaSec)

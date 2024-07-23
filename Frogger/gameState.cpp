@@ -39,6 +39,7 @@ void GameState::update(float deltaSec)
         if (frogsRemaining <= 0)
         {
             // TODO: advance to next level
+            arena->loadLevel(++currentLevel);
             frogsRemaining = 5;
             frog->reset();
         }

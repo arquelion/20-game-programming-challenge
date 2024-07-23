@@ -65,6 +65,7 @@ public:
     AABB& getBoundingBox() { return boundingBox; }
 
     void setCenter(glm::vec2 newCenter) { boundingBox.center = center = newCenter; }
+    void setRadius(glm::vec2 newRadius) { boundingBox.radius = radius = newRadius; }
 
     const glm::vec2& getCenter() const { return center; }
     const glm::vec2& getRadius() const { return radius; }

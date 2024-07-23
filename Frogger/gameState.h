@@ -43,7 +43,6 @@ public:
 
     bool isActive = true;
 
-    // TODO: Animation clocks vs game clocks?
     Clock clock;
     Clock::time_point frogTimeLimit;
     Clock::duration timePerFrog = std::chrono::seconds(60);
@@ -55,6 +54,8 @@ private:
         READY,
         PLAY,
     } levelState;
+
+    int currentLevel = 1;
 
     Clock::time_point transitionTime;
 };
