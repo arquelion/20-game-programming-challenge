@@ -5,12 +5,12 @@ using namespace ci;
 
 void Arena::draw()
 {
-    auto scaledUpperWallLeft = view.calcScaledVec2(upperWallLeft);
-    auto scaledUpperWallRight = view.calcScaledVec2(upperWallRight);
-    auto scaledLowerWallLeft = view.calcScaledVec2(lowerWallLeft);
-    auto scaledLowerWallRight = view.calcScaledVec2(lowerWallRight);
-    auto scaledNetTop = view.calcScaledVec2(netTop);
-    auto scaledNetBot = view.calcScaledVec2(netBot);
+    auto scaledUpperWallLeft = view.getViewVec2(upperWallLeft);
+    auto scaledUpperWallRight = view.getViewVec2(upperWallRight);
+    auto scaledLowerWallLeft = view.getViewVec2(lowerWallLeft);
+    auto scaledLowerWallRight = view.getViewVec2(lowerWallRight);
+    auto scaledNetTop = view.getViewVec2(netTop);
+    auto scaledNetBot = view.getViewVec2(netBot);
 
     gl::color(color);
     gl::context()->pushLineWidth(view.calcScaledValue(arenaStrokeWidth));

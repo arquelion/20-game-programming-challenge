@@ -6,10 +6,16 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Pong", "Pong\Pong.vcxproj", "{8DF691EF-283D-4848-8CD4-C7026A14AA59}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Breakout", "Breakout\Breakout.vcxproj", "{1422F742-7CC5-4F76-BFE6-19008F62C785}"
+	ProjectSection(ProjectDependencies) = postProject
+		{97027BC0-3EC5-4893-9F7F-BD61021A931B} = {97027BC0-3EC5-4893-9F7F-BD61021A931B}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameUtils", "GameUtils\GameUtils.vcxproj", "{97027BC0-3EC5-4893-9F7F-BD61021A931B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Frogger", "Frogger\Frogger.vcxproj", "{6BE015A4-CCBC-4330-920E-8B263B0C2671}"
+	ProjectSection(ProjectDependencies) = postProject
+		{97027BC0-3EC5-4893-9F7F-BD61021A931B} = {97027BC0-3EC5-4893-9F7F-BD61021A931B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

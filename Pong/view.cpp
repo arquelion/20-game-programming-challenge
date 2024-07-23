@@ -32,7 +32,7 @@ float View::calcScreenY(float scalar)
     return scalar * view.y * scale.y + offset.y;
 }
 
-glm::vec2 View::calcScaledVec2(glm::vec2 vec)
+glm::vec2 View::getViewVec2(glm::vec2 vec)
 {
     return glm::vec2(
         vec.x * view.x * scale.x + offset.x,

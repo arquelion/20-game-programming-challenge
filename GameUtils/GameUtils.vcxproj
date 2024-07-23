@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation.h" />
     <ClInclude Include="clock.h" />
     <ClInclude Include="intersection.h" />
     <ClInclude Include="textBox.h" />
@@ -26,6 +27,7 @@
     <ClInclude Include="view.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="animation.cpp" />
     <ClCompile Include="intersection.cpp" />
     <ClCompile Include="view.cpp" />
   </ItemGroup>

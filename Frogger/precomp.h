@@ -15,3 +15,4 @@
 #include "cinder/audio/Voice.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
+#include "cinder/ip/Flip.h"

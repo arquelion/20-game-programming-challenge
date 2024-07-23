@@ -40,7 +40,7 @@ void FroggerClone::keyDown(ci::app::KeyEvent event)
 void FroggerClone::setup()
 {
     hideCursor();
-    setFrameRate(144);
+    addAssetDirectory(".");
     fopen_s(&logFile, "log.txt", "w");
     mode = std::make_unique<PlayMode>(this);
     next = current = FroggerClone::GameMode::PLAY;

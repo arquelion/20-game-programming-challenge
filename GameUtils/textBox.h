@@ -53,7 +53,7 @@ public:
 
     void draw() const
     {
-        ci::gl::drawStringCentered(text, view.calcScaledVec2(center), color, font);
+        ci::gl::drawStringCentered(text, view.getViewVec2(center), color, font);
     }
 
 private:

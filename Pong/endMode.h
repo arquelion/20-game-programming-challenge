@@ -29,7 +29,7 @@ public:
         sprintf_s(endMsg, "Player %d wins!", ((game.winner == Player::ONE) ? 1 : 2));
         ci::gl::drawStringCentered(
             endMsg,
-            view.calcScaledVec2({ 0.5f, 0.3f }),
+            view.getViewVec2({ 0.5f, 0.3f }),
             ci::Color(0.1f, 1.0f, 0.1f),
             ci::Font("Calibri", view.calcScaledValue(0.1f))
         );

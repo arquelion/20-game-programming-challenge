@@ -2,6 +2,8 @@
 class Frog;
 
 #include "game.h"
+
+#include "animation.h"
 #include "intersection.h"
 
 class Frog
@@ -12,7 +14,7 @@ public:
     bool isDead();
     bool isInHouse() const;
 
-    void animate();
+    void animate(bool isDead);
     void move(Direction dir);
     void reset();
     void update();
@@ -20,6 +22,8 @@ public:
 
     static const glm::vec2 collisionRadius;
     bool reachedNewRow = false;
+
+    Animation deathAnim;
 
 private:
     BoundedRect sprite;

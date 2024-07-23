@@ -21,7 +21,7 @@ class Turtle : public Object2D
 public:
     Turtle(TurtlePod count, float speed, Clock::duration sinkRate);
 
-    void update() override;
+    void update(float deltaSec) override;
 
 private:
     TurtlePod count;

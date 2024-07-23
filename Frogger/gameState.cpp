@@ -23,6 +23,7 @@ bool GameState::isGameOver() const
 void GameState::loseLife()
 {
     --livesRemaining;
+    frog->animate(true);
     scoreboard->update();
     frog->reset();
 }
@@ -41,7 +42,7 @@ void GameState::update(float deltaSec)
         }
 
         frog->update();
-        arena->update();
+        arena->update(deltaSec);
 
         if (frog->isInHouse())
         {

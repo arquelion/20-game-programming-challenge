@@ -13,7 +13,7 @@ public:
 
     float calcScreenX(float scalar);
     float calcScreenY(float scalar);
-    glm::vec2 calcScaledVec2(glm::vec2 vec);
+    glm::vec2 getViewVec2(glm::vec2 vec);
 
     std::vector<ci::Rectf> getOffsetRects();
 

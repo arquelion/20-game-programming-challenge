@@ -14,7 +14,7 @@ public:
 
     void loadLevel(int level);
 
-    void update();
+    void update(float deltaSec);
     void draw() const;
 
     ci::Rectf playArea{ {0, 15}, {140, 150} };
@@ -28,6 +28,7 @@ private:
     std::vector<std::shared_ptr<Car>> cars;
     std::vector<std::shared_ptr<Object2D>> waterObjects;
 
+    Object2D road;
     std::vector<BoundedRect> grasses;
     std::vector<House> houses;
     std::vector<BoundedRect> walls;

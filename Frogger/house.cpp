@@ -13,6 +13,9 @@ House::House(BoundedRect rect)
 {
     sprite = rect;
     sprite.getBoundingBox().radius -= Frog::collisionRadius;
+
+    auto img = loadImage("frog.png");
+    texture = gl::Texture2d::create(img);
 }
 
 void House::draw() const

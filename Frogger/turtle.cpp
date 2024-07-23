@@ -36,7 +36,7 @@ Turtle::Turtle(TurtlePod count, float speed, Clock::duration sinkRate)
     color = Color(0.827f / 3 * sinkState, 0.122f, 0.176f);
 }
 
-void Turtle::update()
+void Turtle::update(float deltaSec)
 {
     if (sinkRate != sinkRate.zero())
     {
@@ -61,5 +61,5 @@ void Turtle::update()
         }
     }
 
-    Object2D::update();
+    Object2D::update(deltaSec);
 }

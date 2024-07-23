@@ -32,7 +32,7 @@ float View::calcScreenY(float scalar)
     return scalar * scale.y + offset.y;
 }
 
-glm::vec2 View::calcScaledVec2(glm::vec2 vec)
+glm::vec2 View::getViewVec2(glm::vec2 vec)
 {
     return glm::vec2(
         vec.x * scale.x + offset.x,
@@ -40,7 +40,7 @@ glm::vec2 View::calcScaledVec2(glm::vec2 vec)
     );
 }
 
-ci::Rectf View::getRect(glm::vec2 topLeft, glm::vec2 botRight)
+Rectf View::getRect(glm::vec2 topLeft, glm::vec2 botRight)
 {
     return Rectf(
         topLeft.x * scale.x + offset.x,
@@ -48,6 +48,11 @@ ci::Rectf View::getRect(glm::vec2 topLeft, glm::vec2 botRight)
         botRight.x * scale.x + offset.x,
         botRight.y * scale.y + offset.y
     );
+}
+
+Rectf View::getRect(Rectf designRect)
+{
+    return getRect(designRect.getUpperLeft(), designRect.getLowerRight());
 }
 
 void View::updateWindow(float width, float height)

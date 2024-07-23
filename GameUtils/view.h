@@ -13,9 +13,10 @@ public:
 
     float calcScreenX(float scalar);
     float calcScreenY(float scalar);
-    glm::vec2 calcScaledVec2(glm::vec2 vec);
+    glm::vec2 getViewVec2(glm::vec2 vec);
 
     ci::Rectf getRect(glm::vec2 topLeft, glm::vec2 botRight);
+    ci::Rectf getRect(ci::Rectf designRect);
     glm::vec2 getSize() { return view; }
 
     void updateWindow(float width, float height);

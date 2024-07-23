@@ -15,7 +15,8 @@ void Scoreboard::incrementScore(ScoreSource source)
     switch (source)
     {
     case ScoreSource::HOUSE:
-        score += 50;
+        score += 50; // Base house points
+        score += 10 * (int)(duration_cast<std::chrono::milliseconds>(game.frogTimeLimit - game.clock.now()).count() / 500); // Bonus points for time
         break;
     case ScoreSource::FLY:
     case ScoreSource::LADY_FROG:
@@ -30,7 +31,7 @@ void Scoreboard::incrementScore(ScoreSource source)
 
     if (game.frogsRemaining <= 0)
     {
-        score += 1000 + 10 * (int)(duration_cast<std::chrono::milliseconds>(game.frogTimeLimit - game.clock.now()).count() / 500);
+        score += 1000;
     }
     if (!game.extraLifeGained && score >= 20000)
     {

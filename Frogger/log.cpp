@@ -9,22 +9,40 @@ using namespace ci;
 Log::Log(LogSize size, float speed)
     : size(size)
 {
-    // TODO: load textures
+    Surface bitmap(loadImage("logs.png"));
+
+    Area area;
+    Surface log;
     glm::vec2 radius;
     float initialY = 0.f;
     switch (size)
     {
     case LogSize::MEDIUM:
-        radius = { 25.f, 3.f };
+        radius = { 25.f, 4.f };
         initialY = game.arena->water.getTopLeft().y + 5.f;
+
+        area = Area(Rectf({ 2, 17 }, { 78, 32 }));
+        log = Surface(76, 15, true);
+        log.copyFrom(bitmap, area, glm::ivec2(-2, -17));
+        texture = gl::Texture2d::create(log);
         break;
     case LogSize::LARGE:
-        radius = { 35.f, 3.f };
+        radius = { 35.f, 4.f };
         initialY = game.arena->water.getTopLeft().y + 25.f;
+
+        area = Area(Rectf({ 2, 33 }, { 110, 48 }));
+        log = Surface(108, 15, true);
+        log.copyFrom(bitmap, area, glm::ivec2(-2, -33));
+        texture = gl::Texture2d::create(log);
         break;
     case LogSize::SMALL:
-        radius = { 15.f, 3.f };
+        radius = { 15.f, 4.f };
         initialY = game.arena->water.getTopLeft().y + 35.f;
+
+        area = Area(Rectf({ 2, 1 }, { 46, 16 }));
+        log = Surface(44, 15, true);
+        log.copyFrom(bitmap, area, glm::ivec2(-2, -1));
+        texture = gl::Texture2d::create(log);
         break;
     }
 
@@ -35,3 +53,5 @@ Log::Log(LogSize size, float speed)
 
     color = Color(0.627f, 0.322f, 0.176f);
 }
+
+

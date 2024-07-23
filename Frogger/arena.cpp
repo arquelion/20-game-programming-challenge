@@ -13,9 +13,15 @@ const ci::Color Arena::waterColor = ci::Color(0.2f, 0.2f, 0.8f);
 
 Arena::Arena()
 {
+    // Road
+    glm::vec2 topLeft = { 0, 90 };
+    glm::vec2 botRight = { 140, 140 };
+    road.sprite = BoundedRect::createFromCorners(topLeft, botRight);
+    road.color = Color(0.3f, 0.3f, 0.3f);
+
     // Lanes
-    glm::vec2 topLeft = { 0, 15 };
-    glm::vec2 botRight = { 140, 30 };
+    topLeft = { 0, 15 };
+    botRight = { 140, 30 };
     grasses.push_back(BoundedRect::createFromCorners(topLeft, botRight));
     walls.push_back(BoundedRect::createFromCorners(topLeft, botRight));
 
@@ -70,6 +76,10 @@ void Arena::loadLevel(int level)
     waterObjects.back()->sprite.translate(glm::vec2(-0.5f * playArea.getWidth(), 0));
     waterObjects.push_back(std::make_shared<Log>(LogSize::LARGE, 0.3f));
     waterObjects.push_back(std::make_shared<Log>(LogSize::SMALL, 0.1f));
+    waterObjects.push_back(std::make_shared<Log>(LogSize::SMALL, 0.1f));
+    waterObjects.back()->sprite.translate(glm::vec2(-0.33f * playArea.getWidth(), 0));
+    waterObjects.push_back(std::make_shared<Log>(LogSize::SMALL, 0.1f));
+    waterObjects.back()->sprite.translate(glm::vec2(-0.67f * playArea.getWidth(), 0));
 
     waterObjects.push_back(std::make_shared<Turtle>(TurtlePod::DOUBLE, -0.3f, std::chrono::milliseconds(500)));
     waterObjects.push_back(std::make_shared<Turtle>(TurtlePod::DOUBLE, -0.3f, std::chrono::milliseconds(0)));
@@ -82,21 +92,23 @@ void Arena::loadLevel(int level)
     waterObjects.back()->sprite.translate(glm::vec2(-0.4f * playArea.getWidth(), 0));
 }
 
-void Arena::update()
+void Arena::update(float deltaSec)
 {
     for (auto& car : cars)
     {
-        car->update();
+        car->update(deltaSec);
     }
 
     for (auto& object : waterObjects)
     {
-        object->update();
+        object->update(deltaSec);
     }
 }
 
 void Arena::draw() const
 {
+    road.draw();
+
     gl::color(grassColor);
     for (auto& grass : grasses)
     {

@@ -39,5 +39,5 @@ void Scoreboard::draw()
 {
     char score[128];
     sprintf_s(score, "%d : %d", p1Score, p2Score);
-    gl::drawStringCentered(score, view.calcScaledVec2(scorePos), color, scoreFont);
+    gl::drawStringCentered(score, view.getViewVec2(scorePos), color, scoreFont);
 }

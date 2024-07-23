@@ -37,12 +37,13 @@ public:
     std::shared_ptr<Frog> frog;
     bool extraLifeGained = false;
     int livesRemaining = 7;
-    int frogsRemaining = 1;
+    int frogsRemaining = 5;
 
     std::vector<int>highScores{ 0, 0, 0, 0, 0 };
 
     bool isActive = true;
 
+    // TODO: Animation clocks vs game clocks?
     Clock clock;
     Clock::time_point frogTimeLimit;
     Clock::duration timePerFrog = std::chrono::seconds(60);

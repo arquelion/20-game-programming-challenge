@@ -109,5 +109,5 @@ void Ball::move(float deltaSec)
 
 void Ball::draw() const
 {
-    gl::drawSolidCircle(view.calcScaledVec2(pos), view.calcScaledValue(radius));
+    gl::drawSolidCircle(view.getViewVec2(pos), view.calcScaledValue(radius));
 }

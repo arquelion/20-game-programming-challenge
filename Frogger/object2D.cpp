@@ -5,19 +5,27 @@
 
 using namespace ci;
 
-void Object2D::update()
+void Object2D::update(float deltaSec)
 {
     if (isOffscreen())
     {
         reset();
     }
-    sprite.translate(velocity);
+    sprite.translate(velocity * deltaSec * 60.f);
 }
 
 void Object2D::draw() const
 {
-    gl::color(color);
-    gl::drawSolidRect(view.getRect(sprite.getTopLeft(), sprite.getBotRight()));
+    if (!texture)
+    {
+        gl::color(color);
+        gl::drawSolidRect(view.getRect(sprite.getTopLeft(), sprite.getBotRight()));
+    }
+    else
+    {
+        gl::color(Color::white());
+        gl::draw(texture, view.getRect(sprite.getTopLeft(), sprite.getBotRight()));
+    }
 }
 
 bool Object2D::isOffscreen() const
