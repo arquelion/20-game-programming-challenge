@@ -66,7 +66,7 @@ void Scoreboard::draw() const
     timerText.draw();
 
     auto upperLeft = timerBar.getUpperLeft();
-    auto percent = (game.frogTimeLimit - game.clock.now()).count() / (float)game.timePerFrog.count();
+    auto percent = std::clamp((game.frogTimeLimit - game.clock.now()).count() / (float)game.timePerFrog.count(), 0.f, 1.f);
     auto timeRemaining = (timerBar.getLowerRight().x - upperLeft.x) * percent;
     upperLeft.x = timerBar.getLowerRight().x - timeRemaining;
 

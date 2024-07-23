@@ -24,6 +24,7 @@ public:
     bool reachedNewRow = false;
 
     Animation deathAnim;
+    Animation moveAnim;
 
 private:
     BoundedRect sprite;

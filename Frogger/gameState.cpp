@@ -22,10 +22,12 @@ bool GameState::isGameOver() const
 
 void GameState::loseLife()
 {
-    --livesRemaining;
-    frog->animate(true);
-    scoreboard->update();
-    frog->reset();
+    if (!frog->deathAnim.isPlaying())
+    {
+        --livesRemaining;
+        frog->animate(true);
+        scoreboard->update();
+    }
 }
 
 void GameState::update(float deltaSec)

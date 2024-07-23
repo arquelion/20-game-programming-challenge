@@ -22,14 +22,18 @@ void Animation::play(glm::vec2 start, glm::vec2 end)
         startTime = clock.now();
 
         isPlaying_ = true;
-        update();
+        frameIndex = 0;
     }
 }
 
-void Animation::update()
+bool Animation::update()
 {
+    bool stoppedPlaying = false;
     if (isPlaying_)
+    {
         isPlaying_ = clock.now() - startTime < duration;
+        stoppedPlaying = !isPlaying_;
+    }
 
     if (isPlaying_)
     {
@@ -42,6 +46,8 @@ void Animation::update()
 
         container.offsetCenterTo(lerp(startPos, endPos, progress));
     }
+
+    return stoppedPlaying;
 }
 
 void Animation::draw() const
