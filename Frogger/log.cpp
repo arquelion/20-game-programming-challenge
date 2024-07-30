@@ -18,7 +18,7 @@ Log::Log(LogSize size, float speed)
     switch (size)
     {
     case LogSize::MEDIUM:
-        radius = { 25.f, 4.f };
+        radius = { 20.268f, 4.f };
         initialY = game.arena->water.getTopLeft().y + 5.f;
 
         area = Area(Rectf({ 2, 17 }, { 78, 32 }));
@@ -27,7 +27,7 @@ Log::Log(LogSize size, float speed)
         texture = gl::Texture2d::create(log);
         break;
     case LogSize::LARGE:
-        radius = { 35.f, 4.f };
+        radius = { 28.8f, 4.f };
         initialY = game.arena->water.getTopLeft().y + 25.f;
 
         area = Area(Rectf({ 2, 33 }, { 110, 48 }));
@@ -36,7 +36,7 @@ Log::Log(LogSize size, float speed)
         texture = gl::Texture2d::create(log);
         break;
     case LogSize::SMALL:
-        radius = { 15.f, 4.f };
+        radius = { 11.733f, 4.f };
         initialY = game.arena->water.getTopLeft().y + 35.f;
 
         area = Area(Rectf({ 2, 1 }, { 46, 16 }));

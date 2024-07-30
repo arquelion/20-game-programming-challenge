@@ -66,6 +66,14 @@ Arena::Arena()
 
 void Arena::loadLevel(int level)
 {
+    cars.clear();
+    waterObjects.clear();
+
+    for (auto& house : houses)
+    {
+        house.isOccupied = false;
+    }
+
     cars.push_back(std::make_shared<Car>(CarType::TRUCK, -0.5f));
     cars.push_back(std::make_shared<Car>(CarType::RACER_1, 0.7f));
     cars.push_back(std::make_shared<Car>(CarType::CAR, 0.5f));
@@ -92,11 +100,6 @@ void Arena::loadLevel(int level)
     waterObjects.push_back(std::make_shared<Turtle>(TurtlePod::TRIPLE, -0.2f, std::chrono::milliseconds(1000)));
     waterObjects.push_back(std::make_shared<Turtle>(TurtlePod::TRIPLE, -0.2f, std::chrono::milliseconds(0)));
     waterObjects.back()->sprite.translate(glm::vec2(-0.4f * playArea.getWidth(), 0));
-
-    for (auto& house : houses)
-    {
-        house.isOccupied = false;
-    }
 }
 
 void Arena::update(float deltaSec)

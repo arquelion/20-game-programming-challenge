@@ -1,6 +1,7 @@
 #pragma once
 class Turtle;
 
+#include "animation.h"
 #include "clock.h"
 #include "object2D.h"
 
@@ -21,7 +22,7 @@ class Turtle : public Object2D
 public:
     Turtle(TurtlePod count, float speed, Clock::duration sinkRate);
 
-    void update(float deltaSec) override;
+    //void update(float deltaSec) override;
 
 private:
     TurtlePod count;

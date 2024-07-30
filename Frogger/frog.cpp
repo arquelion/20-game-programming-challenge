@@ -21,13 +21,13 @@ Frog::Frog()
 
     deathAnim.container = Rectf(sprite.getTopLeft(), sprite.getBotRight());
     deathAnim.frames.push_back(gl::Texture2d::create(loadImage("dead.png")));
-    deathAnim.duration = std::chrono::seconds(1);
+    deathAnim.setDuration(std::chrono::seconds(1));
 
     moveAnim.container = Rectf(sprite.getTopLeft(), sprite.getBotRight());
     auto surface = Surface(img);
     ip::flipHorizontal(&surface);
     moveAnim.frames.push_back(gl::Texture2d::create(surface));
-    moveAnim.duration = std::chrono::milliseconds(100);
+    moveAnim.setDuration(std::chrono::milliseconds(100));
 }
 
 bool Frog::isDead()
@@ -51,8 +51,6 @@ bool Frog::isDead()
     }
 
     // Snake heads
-
-    // Crocodile heads
 
     // Water
     if (game.arena->water.getBoundingBox().intersectAABB(sprite.getBoundingBox()))

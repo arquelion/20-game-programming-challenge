@@ -12,16 +12,21 @@ class Animation
 public:
     Animation(Clock& clock);
 
-    bool isPlaying() const;
+    void setDuration(Clock::duration duration);
+    void setDuration(std::vector<Clock::duration> durations);
 
+    void addFrameBehavior(int frame, std::function<void()> func);
+
+    bool isPlaying() const;
     void play(glm::vec2 start, glm::vec2 end);
+    void loop();
+
     bool update();
     void draw() const;
 
-    std::vector<ci::gl::Texture2dRef> frames;
     int frameIndex;
-
-    Clock::duration duration;
+    std::vector<ci::gl::Texture2dRef> frames;
+    std::vector<Clock::duration> durations;
 
     ci::Rectf container;
 
@@ -31,6 +36,11 @@ private:
 
     Clock& clock;
     Clock::time_point startTime;
+    bool isSimpleDuration = true;
+    Clock::duration totalDuration;
 
+    bool isLooping_ = false;
     bool isPlaying_ = false;
+
+    std::vector<std::function<void()>> behaviors;
 };
