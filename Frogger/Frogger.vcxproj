@@ -172,11 +172,9 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="mode.h" />
     <ClInclude Include="object2D.h" />
-    <ClInclude Include="otter.h" />
     <ClInclude Include="playMode.h" />
     <ClInclude Include="precomp.h" />
     <ClInclude Include="scoreboard.h" />
-    <ClInclude Include="snake.h" />
     <ClInclude Include="turtle.h" />
   </ItemGroup>
   <ItemGroup>
@@ -188,7 +186,6 @@
     <ClCompile Include="log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object2D.cpp" />
-    <ClCompile Include="otter.cpp" />
     <ClCompile Include="precomp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -196,7 +193,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="scoreboard.cpp" />
-    <ClCompile Include="snake.cpp" />
     <ClCompile Include="house.cpp" />
     <ClCompile Include="turtle.cpp" />
   </ItemGroup>
