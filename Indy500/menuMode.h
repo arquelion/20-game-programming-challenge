@@ -11,7 +11,7 @@ public:
     {
         game.init();
         game.newGame();
-        game.isActive = false;
+        game.isActive_ = false;
 
         msg.setText("CLICK TO START");
         msg.setColor(ci::Color(0.2f, 0.2f, 1.0f));
@@ -24,7 +24,7 @@ public:
 
     void update() override
     {
-        auto now = game.clock.now();
+        auto now = game.clock_.now();
         auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastUpdateTime);
         game.update(delta.count() / 1000.f);
         msg.update();

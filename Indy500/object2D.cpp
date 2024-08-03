@@ -6,7 +6,7 @@
 using namespace ci;
 
 Object2D::Object2D()
-    : anim(game.clock)
+    : anim(game.clock_)
 {
 }
 
@@ -45,8 +45,7 @@ void Object2D::draw() const
 
 bool Object2D::isOffscreen() const
 {
-    return (signum(velocity.x) == 1 && sprite.getTopLeft().x > game.arena->playArea.x2)
-        || (signum(velocity.x) == -1 && sprite.getBotRight().x < game.arena->playArea.x1);
+    return false;
 }
 
 void Object2D::reset()

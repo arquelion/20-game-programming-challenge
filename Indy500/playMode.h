@@ -42,7 +42,7 @@ public:
 
     void update() override
     {
-        auto now = game.clock.now();
+        auto now = game.clock_.now();
         auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastUpdateTime);
         game.update(delta.count() / 1000.f);
         if (game.isGameOver())
@@ -73,17 +73,17 @@ private:
 
     void togglePause()
     {
-        if (game.isActive && !game.isGameOver())
+        if (game.isActive_ && !game.isGameOver())
         {
             isPaused = !isPaused;
 
             if (isPaused)
             {
-                game.clock.pause();
+                game.clock_.pause();
             }
             else
             {
-                game.clock.resume();
+                game.clock_.resume();
             }
         }
     }

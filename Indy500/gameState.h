@@ -8,10 +8,12 @@
 #include "scoreboard.h"
 #include "textBox.h"
 
+#include "server.h"
+
 class GameState
 {
 public:
-    GameState() {}
+    GameState() : server_(ioContext_) {}
     void init();
 
     void newGame();
@@ -21,12 +23,12 @@ public:
     void draw() const;
 
     // Game elements
-    std::shared_ptr<Arena> arena;
-    std::shared_ptr<Scoreboard> scoreboard;
+    std::shared_ptr<Arena> arena_;
+    std::shared_ptr<Scoreboard> scoreboard_;
 
-    bool isActive = true;
+    bool isActive_ = true;
 
-    Clock clock;
+    Clock clock_;
 
 private:
     enum class LevelState
@@ -38,5 +40,9 @@ private:
 
     //int currentLevel = 1;
 
-    Clock::time_point transitionTime;
+    Clock::time_point transitionTime_;
+
+    boost::asio::io_context ioContext_;
+    TcpServer server_;
+    TcpConnection::pointer client_;
 };

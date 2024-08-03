@@ -9,7 +9,7 @@ class Mode
 public:
     Mode(IndyClone* app)
         : app(app)
-        , lastUpdateTime(game.clock.now()) {}
+        , lastUpdateTime(game.clock_.now()) {}
 
     virtual void keyDown(ci::app::KeyEvent event) {}
     virtual void update() {}
