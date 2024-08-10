@@ -17,7 +17,8 @@ struct NetCommand
 
     union
     {
-        uint32_t number;
+        uint32_t number{ 0 };
+        std::array<float, 2> vector2;
     };
 };
 
@@ -26,6 +27,12 @@ class TcpConnection
 {
 public:
     typedef std::shared_ptr<TcpConnection> pointer;
+
+    TcpConnection(boost::asio::io_context& ioContext)
+        : socket_(ioContext)
+    {
+    }
+    ~TcpConnection() {}
 
     static pointer create(boost::asio::io_context& ioContext);
     static pointer connect(boost::asio::io_context& ioContext, std::string hostname);
@@ -37,12 +44,9 @@ public:
 
     void start();
     std::string read();
+    void write(const NetCommand& cmd);
 
 private:
-    TcpConnection(boost::asio::io_context& ioContext)
-        : socket_(ioContext)
-    {
-    }
 
     void handleWrite(const boost::system::error_code& /*error*/,
         size_t /*bytes_transferred*/);
@@ -76,11 +80,13 @@ private:
     void handleAccept(TcpConnection::pointer newConnection,
         const boost::system::error_code& error);
 
-    void startReceive(TcpConnection::pointer client);
+    void startReceive(ClientContext* clientContext);
 
     void startGame();
     void sendUpdate(TcpConnection::pointer player);
     void processObjects();
+
+    void movePlayer(int playerIndex, glm::vec2 dir);
 
     boost::asio::io_context& ioContext_;
     boost::asio::ip::tcp::acceptor acceptor_;

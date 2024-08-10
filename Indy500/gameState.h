@@ -13,7 +13,7 @@
 class GameState
 {
 public:
-    GameState() : server_(ioContext_) {}
+    GameState() : server_(std::make_shared<TcpServer>(ioContext_)) {}
     void init();
 
     void newGame();
@@ -43,6 +43,6 @@ private:
     Clock::time_point transitionTime_;
 
     boost::asio::io_context ioContext_;
-    TcpServer server_;
+    std::shared_ptr<TcpServer> server_;
     TcpConnection::pointer client_;
 };

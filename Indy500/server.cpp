@@ -6,7 +6,7 @@ using boost::asio::ip::tcp;
 
 TcpConnection::pointer TcpConnection::create(boost::asio::io_context& ioContext)
 {
-    return pointer(new TcpConnection(ioContext));
+    return std::make_shared<TcpConnection>(ioContext);
 }
 
 TcpConnection::pointer TcpConnection::connect(boost::asio::io_context& ioContext, std::string hostname)
@@ -39,6 +39,11 @@ std::string TcpConnection::read()
     return msg;
 }
 
+void TcpConnection::write(const NetCommand& cmd)
+{
+    boost::asio::write(socket_, boost::asio::buffer(&cmd, sizeof(cmd)));
+}
+
 void TcpConnection::handleWrite(const boost::system::error_code&, size_t)
 {
 }
@@ -66,8 +71,9 @@ void TcpServer::handleAccept(TcpConnection::pointer newConnection, const boost::
 {
     if (!error)
     {
-        players.emplace_back(newConnection);
+        players.emplace_back(std::make_unique<ClientContext>(newConnection));
         newConnection->start();
+        startReceive(players.back().get());
     }
 
     if (players.size() < 2)
@@ -80,16 +86,27 @@ void TcpServer::handleAccept(TcpConnection::pointer newConnection, const boost::
     }
 }
 
-void TcpServer::startReceive(TcpConnection::pointer client)
+void TcpServer::startReceive(ClientContext* clientContext)
 {
-    NetCommand command;
-    auto self(shared_from_this());
-    boost::asio::async_read(client->socket(), boost::asio::buffer(&command, sizeof(NetCommand)),
-        [this, self, command](boost::system::error_code ec, std::size_t length)
+    //auto self(shared_from_this());
+    auto command = clientContext->command;
+    boost::asio::async_read(clientContext->client->socket(), boost::asio::buffer(&command, sizeof(command)),
+        [this, &command](boost::system::error_code ec, std::size_t length)
         {
-            if (ec || length < offsetof(NetCommand, number) || command.remainingLength)
+            if (ec)
             {
 
+            }
+            else
+            {
+                switch (command.type)
+                {
+                case NetCommand::CommandType::MOVE:
+                    movePlayer(0, glm::vec2{ command.vector2[0], command.vector2[1]});
+                    break;
+                default:
+                    throw std::exception("invalid command");
+                }
             }
         });
 }
@@ -106,3 +123,13 @@ void TcpServer::sendUpdate(TcpConnection::pointer player)
 void TcpServer::processObjects()
 {
 }
+
+void TcpServer::movePlayer(int playerIndex, glm::vec2 dir)
+{
+    auto& car = cars[playerIndex];
+    car.velocity += dir;
+}
+
+// server updates: process commands since last update, advance server state based on time elapsed, send updated state to clients
+// need separate io context for server to poll async functions
+// client updates: read updates from server, 
