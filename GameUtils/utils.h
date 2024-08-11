@@ -8,6 +8,8 @@ extern int frameCount;
 
 const float FLOAT_INF = std::numeric_limits<float>::infinity();
 
+using Radians = float;
+
 // Strict inequality
 template<typename T>
 bool isBetween(T n, T lower, T upper)

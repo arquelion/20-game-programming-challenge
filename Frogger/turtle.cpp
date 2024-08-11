@@ -10,7 +10,7 @@ Turtle::Turtle(TurtlePod count, float speed, Clock::duration sinkRate)
     : count(count)
     , sinkRate(sinkRate)
     , sinkState(SinkState::EMERGED)
-    , stateStartTime(game.clock.now())
+    , stateStartTime(game.clock.current())
     , stateDuration(sinkRate)
 {
     // TODO: load textures

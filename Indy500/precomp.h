@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <fstream>
 #include <functional>
@@ -8,6 +9,7 @@
 #include <memory>
 #include <numeric>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <utility>
 #include <vector>

@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="arena.cpp" />
+    <ClCompile Include="car.cpp" />
     <ClCompile Include="gameState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="object2D.cpp" />

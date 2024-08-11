@@ -4,7 +4,9 @@
 
 void GameState::init()
 {
-
+    //arena_ = std::make_shared<Arena>();
+    //scoreboard_ = std::make_shared<Scoreboard>();
+    car_ = std::make_shared<Car>();
 }
 
 void GameState::newGame()
@@ -34,5 +36,7 @@ void GameState::update(float deltaSec)
 
 void GameState::draw() const
 {
-
+    //arena_->draw();
+    //scoreboard_->draw();
+    car_->draw();
 }

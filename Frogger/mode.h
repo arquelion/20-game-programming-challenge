@@ -9,7 +9,7 @@ class Mode
 public:
     Mode(FroggerClone* app)
         : app(app)
-        , lastUpdateTime(game.clock.now()) {}
+        , lastUpdateTime(game.clock.current()) {}
 
     virtual void keyDown(ci::app::KeyEvent event) {}
     virtual void update() {}

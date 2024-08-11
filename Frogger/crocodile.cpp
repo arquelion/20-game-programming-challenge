@@ -41,10 +41,10 @@ void Croc::update(float deltaSec)
 {
     Log::update(deltaSec);
 
-    if (game.clock.now() > transitionTime)
+    if (game.clock.current() > transitionTime)
     {
         isMouthOpen = !isMouthOpen;
-        transitionTime = game.clock.now() + (isMouthOpen ? openDuration : closedDuration);
+        transitionTime = game.clock.current() + (isMouthOpen ? openDuration : closedDuration);
         texture = isMouthOpen ? mouthOpenTex : mouthClosedTex;
         if (isMouthOpen)
         {

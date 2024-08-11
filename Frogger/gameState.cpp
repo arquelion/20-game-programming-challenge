@@ -55,7 +55,7 @@ void GameState::update(float deltaSec)
                 return;
             frog->reset();
         }
-        else if (frog->isDead() || clock.now() >= frogTimeLimit)
+        else if (frog->isDead() || clock.current() >= frogTimeLimit)
         {
             loseLife();
         }

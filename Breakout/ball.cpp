@@ -84,7 +84,7 @@ void Ball::reset()
     boundingBox.center = center;
     boundingBox.radius = { radius, radius };
 
-    autoReleaseTime = game.clock.now() + std::chrono::days(1);
+    autoReleaseTime = game.clock.current() + std::chrono::days(1);
     isAttached = true;
 }
 
@@ -92,7 +92,7 @@ void Ball::move(float deltaSec)
 {
     if (isAttached && game.isActive)
     {
-        if (autoReleaseTime > game.clock.now())
+        if (autoReleaseTime > game.clock.current())
         {
             center = game.paddle->center;
             center.x -= catchOffset;
@@ -174,7 +174,7 @@ void Ball::move(float deltaSec)
 
         if (game.paddle->isCatchEnabled && intersect.collider == CollisionObject::PADDLE)
         {
-            autoReleaseTime = game.clock.now() + std::chrono::milliseconds(2000);
+            autoReleaseTime = game.clock.current() + std::chrono::milliseconds(2000);
             catchOffset = game.paddle->center.x - center.x;
             isAttached = true;
             return;

@@ -9,7 +9,7 @@
 using namespace ci;
 using namespace ci::app;
 
-View view{ 140, 165 };
+View view{ 165, 140 };
 GameState game;
 float epsilon = 0.001f;
 FILE* logFile = nullptr;
@@ -18,7 +18,7 @@ int frameCount = 0;
 void prepareSettings(IndyClone::Settings* settings)
 {
     settings->setMultiTouchEnabled(false);
-    settings->setWindowSize(glm::vec2(700, 825));
+    settings->setWindowSize(view.getSize() * 5.f);
 }
 
 void IndyClone::keyDown(ci::app::KeyEvent event)
@@ -41,6 +41,7 @@ void IndyClone::setup()
     hideCursor();
     addAssetDirectory(".");
     fopen_s(&logFile, "log.txt", "w");
+    view.setOrigin(View::Origin::CENTER);
     mode = std::make_unique<PlayMode>(this);
     next = current = IndyClone::GameMode::PLAY;
 }

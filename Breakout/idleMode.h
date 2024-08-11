@@ -31,7 +31,7 @@ public:
 
     void update() override
     {
-        auto now = game.clock.now();
+        auto now = game.clock.current();
         auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastUpdateTime);
         game.update(delta.count() / 1000.f);
         msg.update();

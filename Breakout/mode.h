@@ -13,7 +13,7 @@ public:
     Mode(BreakoutClone* app, GameState& game)
         : app(app)
         , game(game)
-        , lastUpdateTime(game.clock.now()) {}
+        , lastUpdateTime(game.clock.current()) {}
 
     virtual void mouseDown(ci::app::MouseEvent event) {}
     virtual void mouseMove(ci::app::MouseEvent event) {}

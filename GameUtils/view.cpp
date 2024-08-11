@@ -8,7 +8,7 @@ using namespace ci;
 View::View(float width, float height)
     : view(width, height)
 {
-    updateWindow(640.f, 480.f);
+    //updateWindow(640.f, 480.f);
 }
 
 glm::vec2 View::getPixelToDesignScale() const
@@ -24,29 +24,37 @@ float View::calcScaledValue(float value)
 
 float View::calcScreenX(float scalar)
 {
-    return scalar * scale.x + offset.x;
+    return (scalar + offsetToOrigin.x) * scale.x + offset.x;
 }
 
 float View::calcScreenY(float scalar)
 {
-    return scalar * scale.y + offset.y;
+    return (scalar + offsetToOrigin.y) * scale.y + offset.y;
 }
 
-glm::vec2 View::getViewVec2(glm::vec2 vec)
+glm::vec2 View::getScreenVec2(glm::vec2 vec)
 {
-    return glm::vec2(
-        vec.x * scale.x + offset.x,
-        vec.y * scale.y + offset.y
-    );
+    return (vec + offsetToOrigin) * scale + offset;
+}
+
+void View::setOrigin(Origin loc)
+{
+    origin = loc;
+    if (loc == Origin::UPPER_LEFT)
+    {
+        offsetToOrigin = glm::vec2(0);
+    }
+    else
+    {
+        offsetToOrigin = view / 2.f;
+    }
 }
 
 Rectf View::getRect(glm::vec2 topLeft, glm::vec2 botRight)
 {
     return Rectf(
-        topLeft.x * scale.x + offset.x,
-        topLeft.y * scale.y + offset.y,
-        botRight.x * scale.x + offset.x,
-        botRight.y * scale.y + offset.y
+        (topLeft + offsetToOrigin) * scale + offset,
+        (botRight + offsetToOrigin) * scale + offset
     );
 }
 
@@ -79,5 +87,12 @@ void View::updateWindow(float width, float height)
     else
     {
         offset = { 0.f, 0.f };
+    }
+
+    auto clientDesignSpace = window / scale;
+    gl::setMatricesWindow(clientDesignSpace);
+    if (origin == Origin::CENTER)
+    {
+        gl::translate(clientDesignSpace / 2.f);
     }
 }

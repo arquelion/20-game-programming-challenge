@@ -123,7 +123,7 @@ void Frog::reset()
     sprite = BoundedRect::create(initialCenter, initialRadius);
     sprite.getBoundingBox().radius = collisionRadius;
 
-    game.frogTimeLimit = game.clock.now() + game.timePerFrog;
+    game.frogTimeLimit = game.clock.current() + game.timePerFrog;
     farthestYReached = initialCenter.y;
 }
 

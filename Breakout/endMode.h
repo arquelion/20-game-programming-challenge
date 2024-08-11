@@ -11,7 +11,7 @@ class EndMode : public Mode
 public:
     EndMode(BreakoutClone* app, GameState& game)
         : Mode(app, game)
-        , start(game.clock.now())
+        , start(game.clock.current())
         , endMsg(10.f, glm::vec2(50, 10))
         , highScoreList(7.5f, glm::vec2(50, 30))
     {
@@ -43,7 +43,7 @@ public:
     void update() override
     {
         using namespace std::chrono_literals;
-        if (game.clock.now() - start >= 5s)
+        if (game.clock.current() - start >= 5s)
         {
             app->next = BreakoutClone::GameMode::IDLE;
         }

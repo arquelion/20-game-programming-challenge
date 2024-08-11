@@ -1,5 +1,7 @@
 #include "precomp.h"
 
+#include "car.h"
+
 #include "server.h"
 
 using boost::asio::ip::tcp;
@@ -53,7 +55,7 @@ void TcpServer::update()
     processObjects();
     for (auto& player : players)
     {
-        sendUpdate(player->client);
+        sendUpdate(player.get());
     }
 }
 
@@ -62,33 +64,36 @@ void TcpServer::startAccept()
     TcpConnection::pointer newConnection =
         TcpConnection::create(ioContext_);
 
-    acceptor_.async_accept(newConnection->socket(),
-        std::bind(&TcpServer::handleAccept, this, newConnection,
-            boost::asio::placeholders::error));
+    boost::system::error_code error;
+    try
+    {
+        acceptor_.accept(newConnection->socket());
+    }
+    catch (boost::system::error_code e)
+    {
+        error = e;
+    }
+    handleAccept(newConnection, error);
 }
 
 void TcpServer::handleAccept(TcpConnection::pointer newConnection, const boost::system::error_code& error)
 {
     if (!error)
     {
-        players.emplace_back(std::make_unique<ClientContext>(newConnection));
+        players.emplace_back(std::make_unique<ClientContext>(newConnection, NetCommand{}, (int)players.size()));
         newConnection->start();
-        startReceive(players.back().get());
     }
 
     if (players.size() < 2)
     {
         //startAccept();
     }
-    else
-    {
-        startGame();
-    }
+
+    startGame();
 }
 
 void TcpServer::startReceive(ClientContext* clientContext)
 {
-    //auto self(shared_from_this());
     auto command = clientContext->command;
     boost::asio::async_read(clientContext->client->socket(), boost::asio::buffer(&command, sizeof(command)),
         [this, &command](boost::system::error_code ec, std::size_t length)
@@ -113,10 +118,25 @@ void TcpServer::startReceive(ClientContext* clientContext)
 
 void TcpServer::startGame()
 {
+    cars.clear();
+    cars.resize(players.size());
+    for (auto& player : players)
+    {
+        startReceive(player.get());
+    }
 
+    auto lastUpdate = clock.now();
+    updateInterval = std::chrono::seconds(1);
+    while (true)
+    {
+        std::this_thread::sleep_until(lastUpdate + updateInterval);
+        lastUpdate += updateInterval;
+        ioContext_.poll();
+        update();
+    }
 }
 
-void TcpServer::sendUpdate(TcpConnection::pointer player)
+void TcpServer::sendUpdate(ClientContext* player)
 {
 }
 

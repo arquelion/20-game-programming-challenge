@@ -22,7 +22,7 @@ void GameState::init()
     balls.push_back(std::make_shared<Ball>(*this));
 
     levelState = LevelState::PLAY;
-    transitionTime = clock.now() + std::chrono::milliseconds(100);
+    transitionTime = clock.current() + std::chrono::milliseconds(100);
 
     readyMsg.setText("READY");
 }
@@ -74,24 +74,24 @@ void GameState::update(float deltaSec)
             balls.clear();
             balls.push_back(std::make_shared<Ball>(*this));
             paddle->reset();
-            transitionTime = clock.now();
+            transitionTime = clock.current();
         }
 
-        if (clock.now() >= transitionTime)
+        if (clock.current() >= transitionTime)
         {
             switch (levelState)
             {
             case LevelState::LOAD:
                 levelState = LevelState::READY;
-                transitionTime = clock.now() + std::chrono::milliseconds(2000);
+                transitionTime = clock.current() + std::chrono::milliseconds(2000);
                 break;
             case LevelState::READY:
                 levelState = LevelState::PLAY;
-                transitionTime = clock.now() + std::chrono::days(1);
+                transitionTime = clock.current() + std::chrono::days(1);
                 break;
             case LevelState::PLAY:
                 levelState = LevelState::LOAD;
-                transitionTime = clock.now() + std::chrono::milliseconds(100);
+                transitionTime = clock.current() + std::chrono::milliseconds(100);
                 break;
             default:
                 break;

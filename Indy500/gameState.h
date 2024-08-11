@@ -25,6 +25,7 @@ public:
     // Game elements
     std::shared_ptr<Arena> arena_;
     std::shared_ptr<Scoreboard> scoreboard_;
+    std::shared_ptr<Car> car_;
 
     bool isActive_ = true;
 

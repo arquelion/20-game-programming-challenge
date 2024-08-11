@@ -9,7 +9,7 @@ class EndMode : public Mode
 public:
     EndMode(FroggerClone* app)
         : Mode(app)
-        , start(game.clock.now())
+        , start(game.clock.current())
         , endMsg(10.f, glm::vec2(50, 10))
         , highScoreList(7.5f, glm::vec2(50, 30))
     {
@@ -42,7 +42,7 @@ public:
     {
         using namespace std::chrono_literals;
         // TODO: High score name input
-        if (game.clock.now() - start >= 5s)
+        if (game.clock.current() - start >= 5s)
         {
             app->next = FroggerClone::GameMode::IDLE;
         }

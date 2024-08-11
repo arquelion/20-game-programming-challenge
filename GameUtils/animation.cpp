@@ -47,7 +47,7 @@ void Animation::play(glm::vec2 start, glm::vec2 end)
     {
         startPos = start;
         endPos = end;
-        startTime = clock.now();
+        startTime = clock.current();
 
         isPlaying_ = true;
         frameIndex = 0;
@@ -66,7 +66,7 @@ bool Animation::update()
     auto duration = isSimpleDuration
         ? durations[0]
         : durations[frameIndex];
-    auto elapsedDuration = clock.now() - startTime;
+    auto elapsedDuration = clock.current() - startTime;
     
     if (isPlaying_ && !isLooping_)
     {

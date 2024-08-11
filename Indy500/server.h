@@ -64,6 +64,7 @@ public:
         : ioContext_(ioContext),
         acceptor_(ioContext, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT_NUM))
     {
+        // TODO: start new thread
         startAccept();
     }
 
@@ -74,6 +75,7 @@ private:
     {
         TcpConnection::pointer client;
         NetCommand command;
+        int index;
     };
 
     void startAccept();
@@ -83,13 +85,16 @@ private:
     void startReceive(ClientContext* clientContext);
 
     void startGame();
-    void sendUpdate(TcpConnection::pointer player);
+    void sendUpdate(ClientContext* player);
     void processObjects();
 
     void movePlayer(int playerIndex, glm::vec2 dir);
 
     boost::asio::io_context& ioContext_;
     boost::asio::ip::tcp::acceptor acceptor_;
+
+    std::chrono::steady_clock clock;
+    std::chrono::steady_clock::duration updateInterval;
 
     std::vector<std::unique_ptr<ClientContext>> players;
     std::vector<Object2D> cars;

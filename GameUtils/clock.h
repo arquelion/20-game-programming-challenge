@@ -10,7 +10,12 @@ public:
     typedef std::chrono::time_point<Clock>     time_point;
     static const bool is_steady = true;
 
-    time_point now() const noexcept
+    static time_point now() noexcept
+    {
+        return time_point(std::chrono::duration_cast<duration>(std::chrono::steady_clock::now().time_since_epoch()));
+    }
+
+    time_point current() const noexcept
     {
         using namespace std::chrono;
         return time_point(duration_cast<duration>(
