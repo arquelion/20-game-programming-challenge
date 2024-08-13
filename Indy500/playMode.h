@@ -26,16 +26,16 @@ public:
             togglePause();
             break;
         case ci::app::KeyEvent::KEY_UP:
-            
+            game.accelerate(0, 1);
             break;
         case ci::app::KeyEvent::KEY_DOWN:
-            
+            game.accelerate(0, -1);
             break;
         case ci::app::KeyEvent::KEY_LEFT:
-            
+            game.rotate(0, -1);
             break;
         case ci::app::KeyEvent::KEY_RIGHT:
-            
+            game.rotate(0, 1);
             break;
         }
     }

@@ -24,9 +24,6 @@ TcpConnection::pointer TcpConnection::connect(boost::asio::io_context& ioContext
 
 void TcpConnection::start()
 {
-    message_ = "test";
-
-    boost::asio::write(socket_, boost::asio::buffer(message_));
 }
 
 std::string TcpConnection::read()
@@ -53,7 +50,7 @@ void TcpConnection::handleWrite(const boost::system::error_code&, size_t)
 void TcpServer::update()
 {
     processObjects();
-    for (auto& player : players)
+    for (auto& player : players_)
     {
         sendUpdate(player.get());
     }
@@ -80,11 +77,11 @@ void TcpServer::handleAccept(TcpConnection::pointer newConnection, const boost::
 {
     if (!error)
     {
-        players.emplace_back(std::make_unique<ClientContext>(newConnection, NetCommand{}, (int)players.size()));
+        players_.emplace_back(std::make_unique<ClientContext>(newConnection, NetCommand{}, (int)players_.size()));
         newConnection->start();
     }
 
-    if (players.size() < 2)
+    if (players_.size() < 2)
     {
         //startAccept();
     }
@@ -94,9 +91,9 @@ void TcpServer::handleAccept(TcpConnection::pointer newConnection, const boost::
 
 void TcpServer::startReceive(ClientContext* clientContext)
 {
-    auto command = clientContext->command;
+    auto& command = clientContext->command;
     boost::asio::async_read(clientContext->client->socket(), boost::asio::buffer(&command, sizeof(command)),
-        [this, &command](boost::system::error_code ec, std::size_t length)
+        [this, clientContext, &command](boost::system::error_code ec, std::size_t length)
         {
             if (ec)
             {
@@ -106,31 +103,35 @@ void TcpServer::startReceive(ClientContext* clientContext)
             {
                 switch (command.type)
                 {
-                case NetCommand::CommandType::MOVE:
-                    movePlayer(0, glm::vec2{ command.vector2[0], command.vector2[1]});
+                case NetCommand::CommandType::ACCELERATE:
+                    acceleratePlayer(0, command.float32);
+                    break;
+                case NetCommand::CommandType::ROTATE:
+                    rotatePlayer(0, command.float32);
                     break;
                 default:
                     throw std::exception("invalid command");
                 }
             }
+            startReceive(clientContext);
         });
 }
 
 void TcpServer::startGame()
 {
-    cars.clear();
-    cars.resize(players.size());
-    for (auto& player : players)
+    cars_.clear();
+    cars_.resize(players_.size());
+    for (auto& player : players_)
     {
         startReceive(player.get());
     }
 
-    auto lastUpdate = clock.now();
-    updateInterval = std::chrono::seconds(1);
+    auto lastUpdate = clock_.now();
+    updateInterval_ = std::chrono::milliseconds(16);
     while (true)
     {
-        std::this_thread::sleep_until(lastUpdate + updateInterval);
-        lastUpdate += updateInterval;
+        std::this_thread::sleep_until(lastUpdate + updateInterval_);
+        lastUpdate += updateInterval_;
         ioContext_.poll();
         update();
     }
@@ -138,16 +139,33 @@ void TcpServer::startGame()
 
 void TcpServer::sendUpdate(ClientContext* player)
 {
+    GameUpdateData data;
+    for (int i = 0; i < cars_.size() && i < data.cars.size(); ++i)
+    {
+        data.cars[i] = cars_[i];
+    }
+    boost::asio::write(player->client->socket(), boost::asio::buffer(&data, sizeof(GameUpdateData)));
 }
 
 void TcpServer::processObjects()
 {
+    for (auto& car : cars_)
+    {
+        car.velocity *= 0.99;
+        car.sprite.getCenter() += car.velocity * (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
+    }
 }
 
-void TcpServer::movePlayer(int playerIndex, glm::vec2 dir)
+void TcpServer::acceleratePlayer(int playerIndex, float snAccel)
 {
-    auto& car = cars[playerIndex];
-    car.velocity += dir;
+    auto& car = cars_[playerIndex];
+    car.velocity += glm::vec2(cos(car.heading), sin(car.heading)) * car.maxAccel * snAccel;
+}
+
+void TcpServer::rotatePlayer(int playerIndex, float snRotation)
+{
+    auto& car = cars_[playerIndex];
+    car.heading += snRotation * car.maxRotation;
 }
 
 // server updates: process commands since last update, advance server state based on time elapsed, send updated state to clients

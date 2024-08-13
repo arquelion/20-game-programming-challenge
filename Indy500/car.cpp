@@ -19,21 +19,21 @@ Car::Car()
     ip::flipHorizontal(&car);
     texture = gl::Texture2d::create(car);
 
-    sprite = BoundedRect::create({ 20, 20 }, radius);
-    velocity = glm::vec2(5, 0);
+    data.sprite = BoundedRect::create({ 20, 20 }, radius);
+    data.velocity = glm::vec2(5, 0);
 }
 
 void Car::update(float deltaSec)
 {
-    sprite.getCenter() += velocity * deltaSec;
+    data.sprite.getCenter() += data.velocity * deltaSec;
 }
 
 void Car::draw() const
 {
     gl::pushModelMatrix();
-    gl::translate(sprite.getCenter());
-    gl::rotate(heading);
+    gl::translate(data.sprite.getCenter());
+    gl::rotate(data.heading);
     gl::color(Color::white());
-    gl::draw(texture, Rectf(sprite.getTopLeft() - sprite.getCenter(), sprite.getBotRight() - sprite.getCenter()));
+    gl::draw(texture, Rectf(data.sprite.getTopLeft() - data.sprite.getCenter(), data.sprite.getBotRight() - data.sprite.getCenter()));
     gl::popModelMatrix();
 }

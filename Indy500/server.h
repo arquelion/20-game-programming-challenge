@@ -9,7 +9,8 @@ struct NetCommand
 {
     enum class CommandType : uint32_t
     {
-        MOVE,
+        ACCELERATE,
+        ROTATE,
     };
 
     CommandType type;
@@ -18,8 +19,14 @@ struct NetCommand
     union
     {
         uint32_t number{ 0 };
+        float float32;
         std::array<float, 2> vector2;
     };
+};
+
+struct GameUpdateData
+{
+    std::array<CarData, 2> cars;
 };
 
 class TcpConnection
@@ -64,8 +71,8 @@ public:
         : ioContext_(ioContext),
         acceptor_(ioContext, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT_NUM))
     {
-        // TODO: start new thread
-        startAccept();
+        thread_ = std::thread(&TcpServer::startAccept, this);
+        thread_.detach();
     }
 
     void update();
@@ -88,14 +95,16 @@ private:
     void sendUpdate(ClientContext* player);
     void processObjects();
 
-    void movePlayer(int playerIndex, glm::vec2 dir);
+    void acceleratePlayer(int playerIndex, float snAccel);
+    void rotatePlayer(int playerIndex, float snRotation);
 
     boost::asio::io_context& ioContext_;
     boost::asio::ip::tcp::acceptor acceptor_;
+    std::thread thread_;
 
-    std::chrono::steady_clock clock;
-    std::chrono::steady_clock::duration updateInterval;
+    std::chrono::steady_clock clock_;
+    std::chrono::steady_clock::duration updateInterval_;
 
-    std::vector<std::unique_ptr<ClientContext>> players;
-    std::vector<Object2D> cars;
+    std::vector<std::unique_ptr<ClientContext>> players_;
+    std::vector<CarData> cars_;
 };
