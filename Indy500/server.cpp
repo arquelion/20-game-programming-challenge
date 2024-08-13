@@ -151,8 +151,11 @@ void TcpServer::processObjects()
 {
     for (auto& car : cars_)
     {
-        car.velocity *= 0.99;
-        // TODO: Keep all forward velocity and 0.9 of perpendicular velocity
+        // Decay side velocity more than forward velocity.
+        glm::vec2 headUnit{ cos(car.heading), sin(car.heading) };
+        glm::vec2 sideUnit{ sin(car.heading), -cos(car.heading) };
+        car.velocity = 0.99f * glm::dot(headUnit, car.velocity) * headUnit
+            + 0.90f * glm::dot(sideUnit, car.velocity) * sideUnit;
         auto dir = car.velocity * (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
         auto intersect = checkForIntersect(car, dir);
         switch (intersect.object)
