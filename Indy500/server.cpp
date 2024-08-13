@@ -152,8 +152,45 @@ void TcpServer::processObjects()
     for (auto& car : cars_)
     {
         car.velocity *= 0.99;
-        car.sprite.getCenter() += car.velocity * (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
+        // TODO: Keep all forward velocity and 0.9 of perpendicular velocity
+        auto dir = car.velocity * (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
+        auto intersect = checkForIntersect(car, dir);
+        switch (intersect.object)
+        {
+        case CollisionObject::NONE:
+            car.sprite.setCenter(car.sprite.getCenter() + dir);
+            break;
+        case CollisionObject::WALL:
+            car.sprite.setCenter(intersect.closest.pos);
+            car.velocity = { 0, 0 };
+            break;
+        case CollisionObject::CAR:
+            break;
+        default:
+            throw std::exception("invalid collision");
+        }
     }
+}
+Intersect TcpServer::checkForIntersect(CarData& car, glm::vec2 dir) const
+{
+    auto carBox = car.sprite.getBoundingBox();
+    Sweep closest;
+    auto nextCollisionObject = CollisionObject::NONE;
+
+    // Walls
+    for (auto& wall : arena_.walls)
+    {
+        auto sweep = wall.sweepAABB(carBox, dir);
+        if (sweep.t != 1.f && (!closest.hit || sweep.hit->t < closest.hit->t))
+        {
+            closest = sweep;
+            nextCollisionObject = CollisionObject::WALL;
+        }
+    }
+
+    // Cars
+
+    return { closest, nextCollisionObject };
 }
 
 void TcpServer::acceleratePlayer(int playerIndex, float snAccel)

@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="arena.h" />
     <ClInclude Include="car.h" />
+    <ClInclude Include="collision.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameState.h" />
     <ClInclude Include="main.h" />

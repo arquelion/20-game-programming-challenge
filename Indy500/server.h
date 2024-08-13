@@ -2,8 +2,11 @@
 class TcpConnection;
 class TcpServer;
 
+#include "arena.h"
+#include "car.h"
+
 #include "clock.h"
-#include "object2D.h"
+#include "collision.h"
 
 struct NetCommand
 {
@@ -94,6 +97,7 @@ private:
     void startGame();
     void sendUpdate(ClientContext* player);
     void processObjects();
+    Intersect checkForIntersect(CarData& car, glm::vec2 dir) const;
 
     void acceleratePlayer(int playerIndex, float snAccel);
     void rotatePlayer(int playerIndex, float snRotation);
@@ -107,4 +111,5 @@ private:
 
     std::vector<std::unique_ptr<ClientContext>> players_;
     std::vector<CarData> cars_;
+    ArenaData arena_;
 };
