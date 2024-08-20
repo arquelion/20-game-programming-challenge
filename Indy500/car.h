@@ -12,7 +12,7 @@ struct CarData
 
     BoundedRect sprite;
 
-    glm::vec2 velocity;
+    glm::vec2 velocity = { 0, 0 };
     Radians heading = (float)M_PI / 4.f;
     float maxAccel = 10.f;
     Radians maxRotation = (float)M_PI / 4.f;

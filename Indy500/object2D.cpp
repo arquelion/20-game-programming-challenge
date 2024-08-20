@@ -34,12 +34,12 @@ void Object2D::draw() const
     else if (!texture)
     {
         gl::color(color);
-        gl::drawSolidRect(view.getRect(sprite.getTopLeft(), sprite.getBotRight()));
+        gl::drawSolidRect(Rectf(sprite.getTopLeft(), sprite.getBotRight()));
     }
     else
     {
         gl::color(Color::white());
-        gl::draw(texture, view.getRect(sprite.getTopLeft(), sprite.getBotRight()));
+        gl::draw(texture, Rectf(sprite.getTopLeft(), sprite.getBotRight()));
     }
 }
 

@@ -97,7 +97,7 @@ Sweep AABB::sweepAABB(AABB object, glm::vec2 dir) const
     sweep.hit = intersectSegment(object.center, dir, object.radius);
     if (sweep.hit)
     {
-        sweep.t = std::clamp(sweep.hit->t - glm::epsilon<float>(), 0.f, 1.f);
+        sweep.t = std::clamp(sweep.hit->t - epsilon, 0.f, 1.f);
         sweep.pos = object.center + dir * sweep.t;
         auto dHat = glm::normalize(dir);
         sweep.hit->pos = glm::clamp(sweep.hit->pos + dHat * object.radius, center - radius, center + radius);

@@ -44,40 +44,17 @@ void FroggerClone::setup()
     fopen_s(&logFile, "log.txt", "w");
     mode = std::make_unique<PlayMode>(this);
     next = current = FroggerClone::GameMode::PLAY;
-
-    /*std::ifstream highScoreFile{"highscores.txt", std::ifstream::in};
-
-    int numEntries;
-    highScoreFile >> numEntries;
-
-    if (highScoreFile.good())
-    {
-        for (int row = 0; row < numEntries && row < 5; ++row)
-        {
-            highScoreFile >> game.highScores[row];
-        }
-    }*/
 }
 
 void FroggerClone::quit()
 {
-    /*std::ofstream highScoreFile{"highscores.txt", std::ofstream::out};
-
-    if (highScoreFile.good())
-    {
-        highScoreFile << "5" << "\n";
-        for (int i = 0; i < 5; ++i)
-        {
-            highScoreFile << game.highScores[i] << "\n";
-        }
-    }*/
-
     App::quit();
 }
 
 void FroggerClone::update()
 {
     view.updateWindow(getWindowWidth() * 1.f, getWindowHeight() * 1.f);
+    gl::setMatricesWindow({ getWindowWidth(), getWindowHeight() });
     mode->update();
     updateMode();
     ++frameCount;

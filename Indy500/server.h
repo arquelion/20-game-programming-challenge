@@ -14,10 +14,13 @@ struct NetCommand
     {
         ACCELERATE,
         ROTATE,
+
+        LEVEL_LAYOUT,
+        GAME_PREP,
     };
 
     CommandType type;
-    uint32_t remainingLength;
+    uint32_t dataLength;
 
     union
     {
@@ -55,6 +58,7 @@ public:
     void start();
     std::string read();
     void write(const NetCommand& cmd);
+    void write(const NetCommand& cmd, const void* data);
 
 private:
 
@@ -93,8 +97,10 @@ private:
         const boost::system::error_code& error);
 
     void startReceive(ClientContext* clientContext);
+    void startListeningToPlayers();
 
-    void startGame();
+    void prepareGame();
+    void runGame();
     void sendUpdate(ClientContext* player);
     void processObjects();
     Intersect checkForIntersect(CarData& car, glm::vec2 dir) const;

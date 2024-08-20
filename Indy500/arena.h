@@ -5,6 +5,7 @@ class Arena;
 
 #include "game.h"
 #include "intersection.h"
+#include "object2D.h"
 
 struct ArenaData
 {
@@ -15,6 +16,7 @@ struct ArenaData
         {glm::vec2(-87.5, 0), glm::vec2(5, 70)},
         {glm::vec2(87.5, 0), glm::vec2(5, 70)}
     } };
+    std::vector<AABB> collideables;
 };
 
 class Arena
@@ -31,4 +33,5 @@ public:
 
 private:
     friend class GameState;
+    std::vector<Object2D> terrain;
 };

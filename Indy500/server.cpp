@@ -43,6 +43,12 @@ void TcpConnection::write(const NetCommand& cmd)
     boost::asio::write(socket_, boost::asio::buffer(&cmd, sizeof(cmd)));
 }
 
+void TcpConnection::write(const NetCommand& cmd, const void* data)
+{
+    write(cmd);
+    boost::asio::write(socket_, boost::asio::buffer(data, cmd.dataLength));
+}
+
 void TcpConnection::handleWrite(const boost::system::error_code&, size_t)
 {
 }
@@ -86,7 +92,9 @@ void TcpServer::handleAccept(TcpConnection::pointer newConnection, const boost::
         //startAccept();
     }
 
-    startGame();
+    prepareGame();
+    startListeningToPlayers();
+    runGame();
 }
 
 void TcpServer::startReceive(ClientContext* clientContext)
@@ -109,6 +117,11 @@ void TcpServer::startReceive(ClientContext* clientContext)
                 case NetCommand::CommandType::ROTATE:
                     rotatePlayer(0, command.float32);
                     break;
+                case NetCommand::CommandType::LEVEL_LAYOUT:
+
+                    break;
+                case NetCommand::CommandType::GAME_PREP:
+                    break;
                 default:
                     throw std::exception("invalid command");
                 }
@@ -117,7 +130,7 @@ void TcpServer::startReceive(ClientContext* clientContext)
         });
 }
 
-void TcpServer::startGame()
+void TcpServer::startListeningToPlayers()
 {
     cars_.clear();
     cars_.resize(players_.size());
@@ -125,7 +138,29 @@ void TcpServer::startGame()
     {
         startReceive(player.get());
     }
+}
 
+void TcpServer::prepareGame()
+{
+    AABB block;
+    block.center = { 10, 10 };
+    block.radius = { 4, 4 };
+    arena_.collideables.push_back(block);
+
+    NetCommand level, ready;
+    level.type = NetCommand::CommandType::LEVEL_LAYOUT;
+    level.number = 0;
+    ready.type = NetCommand::CommandType::GAME_PREP;
+    ready.number = 1;
+    for (auto& player : players_)
+    {
+        player->client->write(level);
+        player->client->write(ready);
+    }
+}
+
+void TcpServer::runGame()
+{
     auto lastUpdate = clock_.now();
     updateInterval_ = std::chrono::milliseconds(16);
     while (true)
@@ -191,6 +226,16 @@ Intersect TcpServer::checkForIntersect(CarData& car, glm::vec2 dir) const
         }
     }
 
+    for (auto& object : arena_.collideables)
+    {
+        auto sweep = object.sweepAABB(carBox, dir);
+        if (sweep.t != 1.f && (!closest.hit || sweep.hit->t < closest.hit->t))
+        {
+            closest = sweep;
+            nextCollisionObject = CollisionObject::WALL;
+        }
+    }
+
     // Cars
 
     return { closest, nextCollisionObject };
@@ -208,6 +253,7 @@ void TcpServer::rotatePlayer(int playerIndex, float snRotation)
     car.heading += snRotation * car.maxRotation;
 }
 
-// server updates: process commands since last update, advance server state based on time elapsed, send updated state to clients
-// need separate io context for server to poll async functions
-// client updates: read updates from server, 
+// Non axis-aligned bounding boxes
+// More terrain
+// Scoreboard
+// Lap Detection

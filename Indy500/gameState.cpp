@@ -4,15 +4,20 @@
 
 void GameState::init()
 {
-    //arena_ = std::make_shared<Arena>();
+    arena_ = std::make_shared<Arena>();
     //scoreboard_ = std::make_shared<Scoreboard>();
     cars_.push_back(std::make_shared<Car>());
 }
 
 void GameState::newGame()
 {
+    arena_->loadLevel(0);
+
     client_ = TcpConnection::connect(ioContext_, "localhost");
-    ioContext_.poll();
+    NetCommand level, ready;
+    prepareGame(level);
+    prepareGame(ready);
+    ioContext_.run();
     startReceive();
 }
 
@@ -24,7 +29,7 @@ bool GameState::isGameOver() const
 void GameState::accelerate(int player, float snAccel)
 {
     NetCommand cmd;
-    cmd.remainingLength = 0;
+    cmd.dataLength = 0;
     cmd.type = NetCommand::CommandType::ACCELERATE;
     cmd.float32 = snAccel;
     client_->write(cmd);
@@ -34,7 +39,7 @@ void GameState::accelerate(int player, float snAccel)
 void GameState::rotate(int player, float snRotation)
 {
     NetCommand cmd;
-    cmd.remainingLength = 0;
+    cmd.dataLength = 0;
     cmd.type = NetCommand::CommandType::ROTATE;
     cmd.float32 = snRotation;
     client_->write(cmd);
@@ -48,7 +53,7 @@ void GameState::update(float deltaSec)
 
 void GameState::draw() const
 {
-    //arena_->draw();
+    arena_->draw();
     //scoreboard_->draw();
     for (auto& car : cars_)
     {
@@ -73,5 +78,31 @@ void GameState::startReceive()
             }
         }
         startReceive();
+    });
+}
+
+void GameState::prepareGame(NetCommand& cmd)
+{
+    boost::asio::async_read(client_->socket(), boost::asio::buffer(&cmd, sizeof(cmd)),
+        [this, &cmd](boost::system::error_code ec, std::size_t length)
+    {
+        if (ec)
+        {
+
+        }
+        else
+        {
+            switch (cmd.type)
+            {
+            case NetCommand::CommandType::LEVEL_LAYOUT:
+                currentLevel = cmd.number;
+                arena_->loadLevel(currentLevel);
+                break;
+            case NetCommand::CommandType::GAME_PREP:
+                break;
+            default:
+                throw std::exception("invalid command");
+            }
+        }
     });
 }

@@ -91,6 +91,7 @@ void BreakoutClone::quit()
 void BreakoutClone::update()
 {
     view.updateWindow(getWindowWidth() * 1.f, getWindowHeight() * 1.f);
+    gl::setMatricesWindow({ getWindowWidth(), getWindowHeight() });
     mode->update();
     updateMode();
     ++frameCount;

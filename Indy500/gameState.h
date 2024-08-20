@@ -42,7 +42,7 @@ private:
         PLAY,
     } levelState;
 
-    //int currentLevel = 1;
+    int32_t currentLevel = 1;
 
     Clock::time_point transitionTime_;
 
@@ -53,4 +53,5 @@ private:
     GameUpdateData updateData_;
 
     void startReceive();
+    void prepareGame(NetCommand& cmd);
 };

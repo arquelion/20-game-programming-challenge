@@ -1,5 +1,6 @@
 #pragma once
 struct AABB;
+extern float epsilon;
 
 #include <optional>
 #include <vector>
