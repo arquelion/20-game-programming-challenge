@@ -1,5 +1,6 @@
 #pragma once
 class Renderable2D;
+struct NetRenderable2D;
 
 #include "cinder/gl/gl.h"
 
@@ -8,8 +9,9 @@ class Renderable2D;
 class Renderable2D
 {
 public:
-    Renderable2D() {}
+    Renderable2D();
     Renderable2D(glm::vec2 center, glm::vec2 radius);
+    auto operator=(const NetRenderable2D& source) -> Renderable2D&;
 
     void translate(glm::vec2 dir);
     void rotate(Radians delta);
@@ -32,4 +34,16 @@ public:
     Radians initialHeading;
 
 private:
+};
+
+struct NetRenderable2D
+{
+    auto operator=(const Renderable2D& source) -> NetRenderable2D&;
+
+    ci::Rectf sprite;
+    glm::vec2 velocity;
+    Radians heading;
+
+    glm::vec2 initialCenter;
+    Radians initialHeading;
 };

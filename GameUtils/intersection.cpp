@@ -175,7 +175,7 @@ Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
     if (!isColliding(futureObj))
     {
         sweep.pos = futureObj.center;
-        sweep.t = 0.f;
+        sweep.t = 1.f;
         return sweep;
     }
     

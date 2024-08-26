@@ -1,5 +1,6 @@
 #pragma once
 class Collideable2D;
+struct NetCollideable2D;
 class BoundedRect;
 
 #include "cinder/gl/gl.h"
@@ -11,6 +12,7 @@ class Collideable2D
 {
 public:
     Collideable2D(glm::vec2 center, glm::vec2 radius);
+    auto operator=(const NetCollideable2D source) -> Collideable2D;
 
     void translate(glm::vec2 dir);
     void rotate(Radians delta);
@@ -23,6 +25,14 @@ public:
 
     OBB boundingBox;
     Renderable2D renderObj;
+};
+
+struct NetCollideable2D
+{
+    auto operator=(const Collideable2D source) -> NetCollideable2D;
+
+    OBB boundingBox;
+    NetRenderable2D renderObj;
 };
 
 // Used for Frogger only

@@ -1,12 +1,21 @@
 #pragma once
+struct CarData;
 class Car;
+struct NetCar;
 
 #include "collisionObjects.h"
 
-class Car
+struct CarData
+{
+    float maxAccel = 10.f;
+    Radians maxRotation = (float)M_PI / 4.f;
+};
+
+class Car : public CarData
 {
 public:
     Car();
+    Car& operator=(const NetCar& source);
 
     void loadTexture();
 
@@ -14,6 +23,11 @@ public:
     void draw() const;
 
     Collideable2D object;
-    float maxAccel = 10.f;
-    Radians maxRotation = (float)M_PI / 4.f;
+};
+
+struct NetCar : public CarData
+{
+    auto operator=(const Car& source) -> NetCar&;
+
+    NetCollideable2D object;
 };

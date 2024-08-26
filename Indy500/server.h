@@ -32,7 +32,6 @@ struct NetCommand
 
 struct GameUpdateData
 {
-    // TODO: NetCar constructed from Car except without the texture stuff (keep location/position data from renderObj blah blah)
     std::array<NetCar, 2> cars;
 };
 

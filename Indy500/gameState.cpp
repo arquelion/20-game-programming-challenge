@@ -9,7 +9,7 @@ void GameState::init()
     cars_.push_back(std::make_shared<Car>());
     for (auto& car : cars_)
     {
-        //car->loadTexture();
+        car->loadTexture();
     }
 }
 

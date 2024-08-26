@@ -9,8 +9,13 @@ using namespace ci;
 Car::Car()
     : object({ 20, 20 }, { 6.4f, 4.f })
 {
-    loadTexture();
     object.renderObj.velocity = glm::vec2(5, 0);
+}
+
+Car& Car::operator=(const NetCar& source)
+{
+    object = source.object;
+    return *this;
 }
 
 void Car::loadTexture()
@@ -34,4 +39,12 @@ void Car::update(float deltaSec)
 void Car::draw() const
 {
     object.draw();
+}
+
+
+auto NetCar::operator=(const Car& source) -> NetCar&
+{
+    CarData::operator=(source);
+    object = source.object;
+    return *this;
 }

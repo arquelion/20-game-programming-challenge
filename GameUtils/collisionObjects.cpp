@@ -4,7 +4,13 @@ Collideable2D::Collideable2D(glm::vec2 center, glm::vec2 radius)
     : boundingBox(center, radius)
     , renderObj(center, radius)
 {
+}
 
+auto Collideable2D::operator=(const NetCollideable2D source) -> Collideable2D
+{
+    boundingBox = source.boundingBox;
+    renderObj = source.renderObj;
+    return *this;
 }
 
 void Collideable2D::translate(glm::vec2 dir)
@@ -40,6 +46,15 @@ void Collideable2D::draw() const
 {
     renderObj.draw();
 }
+
+
+auto NetCollideable2D::operator=(const Collideable2D source) -> NetCollideable2D
+{
+    boundingBox = source.boundingBox;
+    renderObj = source.renderObj;
+    return *this;
+}
+
 
 BoundedRect BoundedRect::create(glm::vec2 center, glm::vec2 radius)
 {

@@ -199,7 +199,7 @@ void TcpServer::processObjects()
             car.object.translate(dir);
             break;
         case CollisionObject::WALL:
-            car.object.translate(intersect.closest.t * velocity);
+            car.object.translate(intersect.closest.t * dir);
             velocity = { 0, 0 };
             break;
         case CollisionObject::CAR:
@@ -219,7 +219,7 @@ Intersect TcpServer::checkForIntersect(Car& car, glm::vec2 dir) const
     for (auto& wall : arena_.walls)
     {
         auto sweep = wall.sweepOBB(carBox, dir);
-        if (sweep.t != 1.f && (!closest.hit || sweep.hit->t < closest.hit->t))
+        if ((sweep.t != 1.f) && (sweep.t < closest.t))
         {
             closest = sweep;
             nextCollisionObject = CollisionObject::WALL;
@@ -229,7 +229,7 @@ Intersect TcpServer::checkForIntersect(Car& car, glm::vec2 dir) const
     for (auto& object : arena_.collideables)
     {
         auto sweep = object.sweepOBB(carBox, dir);
-        if (sweep.t != 1.f && (!closest.hit || sweep.hit->t < closest.hit->t))
+        if ((sweep.t != 1.f) && (sweep.t < closest.t))
         {
             closest = sweep;
             nextCollisionObject = CollisionObject::WALL;
