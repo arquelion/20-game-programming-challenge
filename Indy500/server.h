@@ -102,7 +102,8 @@ private:
     void runGame();
     void sendUpdate(ClientContext* player);
     void processObjects();
-    Intersect checkForIntersect(Car& car, glm::vec2 dir) const;
+    Intersect checkForIntersect(const Car& car, glm::vec2 dir) const;
+    bool isIntersecting(const Car& car) const;
 
     void acceleratePlayer(int playerIndex, float snAccel);
     void rotatePlayer(int playerIndex, float snRotation);

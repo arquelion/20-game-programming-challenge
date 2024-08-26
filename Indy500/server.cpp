@@ -209,7 +209,7 @@ void TcpServer::processObjects()
         }
     }
 }
-Intersect TcpServer::checkForIntersect(Car& car, glm::vec2 dir) const
+Intersect TcpServer::checkForIntersect(const Car& car, glm::vec2 dir) const
 {
     auto carBox = car.object.boundingBox;
     Sweep closest;
@@ -241,6 +241,11 @@ Intersect TcpServer::checkForIntersect(Car& car, glm::vec2 dir) const
     return { closest, nextCollisionObject };
 }
 
+bool TcpServer::isIntersecting(const Car& car) const
+{
+    return checkForIntersect(car, { 0, 0 }).closest.t < 1.0f;
+}
+
 void TcpServer::acceleratePlayer(int playerIndex, float snAccel)
 {
     auto& car = cars_[playerIndex];
@@ -251,8 +256,12 @@ void TcpServer::acceleratePlayer(int playerIndex, float snAccel)
 void TcpServer::rotatePlayer(int playerIndex, float snRotation)
 {
     auto& car = cars_[playerIndex];
-    car.object.renderObj.heading += snRotation * car.maxRotation;
+    assert(!isIntersecting(car));
+    auto futureCar{ car };
+    Radians delta = snRotation * car.maxRotation;
+    futureCar.object.rotate(delta);
+    if (!isIntersecting(futureCar)) {
+        car.object.boundingBox = futureCar.object.boundingBox;
+        car.object.renderObj.heading += delta;
+    }
 }
-
-// TODOs:
-// serialize/deserialize to avoid sending bad textures around

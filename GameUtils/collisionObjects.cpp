@@ -75,6 +75,4 @@ void BoundedRect::translate(glm::vec2 dir)
 }
 
 // TODOs:
-// combine OBB with Renderable2D in Collideable2D
-// implement rotation of bounding boxes
 // when to block rotation if rotation would result in bounding box collisions? offset?
