@@ -13,7 +13,7 @@
 class GameState
 {
 public:
-    GameState() : server_(std::make_shared<TcpServer>(ioContext_)) {}
+    GameState() : server_(std::make_shared<TcpServer>()) {}
     void init();
 
     void newGame();

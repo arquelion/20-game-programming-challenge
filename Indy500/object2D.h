@@ -2,7 +2,7 @@
 class Object2D;
 
 #include "animation.h"
-#include "intersection.h"
+#include "collisionObjects.h"
 
 class Object2D
 {

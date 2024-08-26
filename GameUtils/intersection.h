@@ -1,5 +1,6 @@
 #pragma once
 struct AABB;
+struct OBB;
 extern float epsilon;
 
 #include <optional>
@@ -9,7 +10,8 @@ extern float epsilon;
 
 #include "utils.h"
 
-/* Source: https://noonat.github.io/intersect/ */
+/* Sources: https://noonat.github.io/intersect/                                           */
+/*          https://textbooks.cs.ksu.edu/cis580/04-collisions/04-separating-axis-theorem/ */
 
 struct Hit
 {
@@ -52,39 +54,28 @@ struct AABB
     glm::vec2 radius{ 0, 0 }; // "Radius"
 };
 
-class BoundedRect
+// Oriented Bounding Box - TODO: generalize to 3d
+struct OBB
 {
 public:
-    BoundedRect() {}
-    static BoundedRect create(glm::vec2 center, glm::vec2 radius);
-    static BoundedRect createFromCorners(glm::vec2 topLeft, glm::vec2 botRight);
+    OBB() {}
+    OBB(glm::vec2 center, std::vector<glm::vec2> vertices);
+    OBB(glm::vec2 center, glm::vec2 radius);
 
-    glm::vec2 getTopLeft() const { return center - radius; }
-    glm::vec2 getBotRight() const { return center + radius; }
-    glm::vec2& getCenter() { return center; }
-    glm::vec2& getRadius() { return radius; }
-    AABB& getBoundingBox() { return boundingBox; }
+    bool isColliding(const OBB& that) const;
 
-    void setCenter(glm::vec2 newCenter) { boundingBox.center = center = newCenter; }
-    void setRadius(glm::vec2 newRadius) { boundingBox.radius = radius = newRadius; }
+    Sweep sweepOBB(const OBB& dynamicObj, glm::vec2 dir = { 0, 0 }) const;
 
-    const glm::vec2& getCenter() const { return center; }
-    const glm::vec2& getRadius() const { return radius; }
-    const AABB& getBoundingBox() const { return boundingBox; }
-
+    void rotate(float radians);
     void translate(glm::vec2 dir);
 
+    glm::vec2 center{ 0, 0 };
+    std::vector<glm::vec2> vertices;
+    std::vector<glm::vec2> normals;
+
 private:
-    BoundedRect(glm::vec2 center, glm::vec2 radius)
-        : center(center)
-        , radius(radius)
-        , boundingBox(center, radius)
-    {}
-
-    glm::vec2 center;
-    glm::vec2 radius;
-
-    AABB boundingBox;
+    void calcNormals();
+    std::pair<float, float> project(glm::vec2 axis) const;
 };
 
 namespace std

@@ -33,6 +33,12 @@
     <ClInclude Include="animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="collisionObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="intersection.cpp">
@@ -42,6 +48,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="collisionObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,7 +4,7 @@ class Frog;
 #include "game.h"
 
 #include "animation.h"
-#include "intersection.h"
+#include "collisionObjects.h"
 
 class Frog
 {

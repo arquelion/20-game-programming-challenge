@@ -142,9 +142,7 @@ void TcpServer::startListeningToPlayers()
 
 void TcpServer::prepareGame()
 {
-    AABB block;
-    block.center = { 10, 10 };
-    block.radius = { 4, 4 };
+    OBB block = { {10, 10}, {4, 4} };
     arena_.collideables.push_back(block);
 
     NetCommand level, ready;
@@ -186,21 +184,23 @@ void TcpServer::processObjects()
 {
     for (auto& car : cars_)
     {
+        auto heading = car.object.renderObj.heading;
+        auto& velocity = car.object.renderObj.velocity;
         // Decay side velocity more than forward velocity.
-        glm::vec2 headUnit{ cos(car.heading), sin(car.heading) };
-        glm::vec2 sideUnit{ sin(car.heading), -cos(car.heading) };
-        car.velocity = 0.99f * glm::dot(headUnit, car.velocity) * headUnit
-            + 0.90f * glm::dot(sideUnit, car.velocity) * sideUnit;
-        auto dir = car.velocity * (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
+        glm::vec2 headUnit{ cos(heading), sin(heading) };
+        glm::vec2 sideUnit{ sin(heading), -cos(heading) };
+        velocity = 0.99f * glm::dot(headUnit, velocity) * headUnit
+            + 0.90f * glm::dot(sideUnit, velocity) * sideUnit;
+        auto dir = velocity * (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
         auto intersect = checkForIntersect(car, dir);
         switch (intersect.object)
         {
         case CollisionObject::NONE:
-            car.sprite.setCenter(car.sprite.getCenter() + dir);
+            car.object.translate(dir);
             break;
         case CollisionObject::WALL:
-            car.sprite.setCenter(intersect.closest.pos);
-            car.velocity = { 0, 0 };
+            car.object.translate(intersect.closest.t * velocity);
+            velocity = { 0, 0 };
             break;
         case CollisionObject::CAR:
             break;
@@ -209,16 +209,16 @@ void TcpServer::processObjects()
         }
     }
 }
-Intersect TcpServer::checkForIntersect(CarData& car, glm::vec2 dir) const
+Intersect TcpServer::checkForIntersect(Car& car, glm::vec2 dir) const
 {
-    auto carBox = car.sprite.getBoundingBox();
+    auto carBox = car.object.boundingBox;
     Sweep closest;
     auto nextCollisionObject = CollisionObject::NONE;
 
     // Walls
     for (auto& wall : arena_.walls)
     {
-        auto sweep = wall.sweepAABB(carBox, dir);
+        auto sweep = wall.sweepOBB(carBox, dir);
         if (sweep.t != 1.f && (!closest.hit || sweep.hit->t < closest.hit->t))
         {
             closest = sweep;
@@ -228,7 +228,7 @@ Intersect TcpServer::checkForIntersect(CarData& car, glm::vec2 dir) const
 
     for (auto& object : arena_.collideables)
     {
-        auto sweep = object.sweepAABB(carBox, dir);
+        auto sweep = object.sweepOBB(carBox, dir);
         if (sweep.t != 1.f && (!closest.hit || sweep.hit->t < closest.hit->t))
         {
             closest = sweep;
@@ -244,16 +244,15 @@ Intersect TcpServer::checkForIntersect(CarData& car, glm::vec2 dir) const
 void TcpServer::acceleratePlayer(int playerIndex, float snAccel)
 {
     auto& car = cars_[playerIndex];
-    car.velocity += glm::vec2(cos(car.heading), sin(car.heading)) * car.maxAccel * snAccel;
+    auto& body = car.object.renderObj;
+    body.velocity += glm::vec2(cos(body.heading), sin(body.heading)) * car.maxAccel * snAccel;
 }
 
 void TcpServer::rotatePlayer(int playerIndex, float snRotation)
 {
     auto& car = cars_[playerIndex];
-    car.heading += snRotation * car.maxRotation;
+    car.object.renderObj.heading += snRotation * car.maxRotation;
 }
 
-// Non axis-aligned bounding boxes
-// More terrain
-// Scoreboard
-// Lap Detection
+// TODOs:
+// serialize/deserialize to avoid sending bad textures around

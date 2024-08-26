@@ -21,14 +21,18 @@
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="clock.h" />
+    <ClInclude Include="collisionObjects.h" />
     <ClInclude Include="intersection.h" />
+    <ClInclude Include="renderObjects.h" />
     <ClInclude Include="textBox.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="view.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
+    <ClCompile Include="collisionObjects.cpp" />
     <ClCompile Include="intersection.cpp" />
+    <ClCompile Include="renderObjects.cpp" />
     <ClCompile Include="view.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

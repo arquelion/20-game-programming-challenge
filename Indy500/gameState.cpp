@@ -7,6 +7,10 @@ void GameState::init()
     arena_ = std::make_shared<Arena>();
     //scoreboard_ = std::make_shared<Scoreboard>();
     cars_.push_back(std::make_shared<Car>());
+    for (auto& car : cars_)
+    {
+        //car->loadTexture();
+    }
 }
 
 void GameState::newGame()
@@ -74,7 +78,7 @@ void GameState::startReceive()
         {
             for (int i = 0; i < updateData_.cars.size() && i < cars_.size(); ++i)
             {
-                cars_[i]->data = updateData_.cars[i];
+                *cars_[i] = updateData_.cars[i];
             }
         }
         startReceive();
@@ -106,3 +110,8 @@ void GameState::prepareGame(NetCommand& cmd)
         }
     });
 }
+
+// TODOs:
+// More terrain
+// Scoreboard
+// Lap Detection

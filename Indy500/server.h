@@ -32,7 +32,8 @@ struct NetCommand
 
 struct GameUpdateData
 {
-    std::array<CarData, 2> cars;
+    // TODO: NetCar constructed from Car except without the texture stuff (keep location/position data from renderObj blah blah)
+    std::array<NetCar, 2> cars;
 };
 
 class TcpConnection
@@ -74,9 +75,8 @@ class TcpServer : std::enable_shared_from_this<TcpServer>
 public:
     static const boost::asio::ip::port_type PORT_NUM = 50013;
 
-    TcpServer(boost::asio::io_context& ioContext)
-        : ioContext_(ioContext),
-        acceptor_(ioContext, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT_NUM))
+    TcpServer()
+        : acceptor_(ioContext_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), PORT_NUM))
     {
         thread_ = std::thread(&TcpServer::startAccept, this);
         thread_.detach();
@@ -103,12 +103,12 @@ private:
     void runGame();
     void sendUpdate(ClientContext* player);
     void processObjects();
-    Intersect checkForIntersect(CarData& car, glm::vec2 dir) const;
+    Intersect checkForIntersect(Car& car, glm::vec2 dir) const;
 
     void acceleratePlayer(int playerIndex, float snAccel);
     void rotatePlayer(int playerIndex, float snRotation);
 
-    boost::asio::io_context& ioContext_;
+    boost::asio::io_context ioContext_;
     boost::asio::ip::tcp::acceptor acceptor_;
     std::thread thread_;
 
@@ -116,6 +116,6 @@ private:
     std::chrono::steady_clock::duration updateInterval_;
 
     std::vector<std::unique_ptr<ClientContext>> players_;
-    std::vector<CarData> cars_;
+    std::vector<Car> cars_;
     ArenaData arena_;
 };

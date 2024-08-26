@@ -126,20 +126,117 @@ Sweep AABB::sweepInto(std::vector<AABB> objects, glm::vec2 dir) const
     return nearest;
 }
 
-BoundedRect BoundedRect::create(glm::vec2 center, glm::vec2 radius)
+OBB::OBB(glm::vec2 center, std::vector<glm::vec2> vertices)
+    : center(center)
+    , vertices(vertices)
 {
-    return BoundedRect(center, radius);
+    calcNormals();
 }
 
-BoundedRect BoundedRect::createFromCorners(glm::vec2 topLeft, glm::vec2 botRight)
+OBB::OBB(glm::vec2 center, glm::vec2 radius)
+    : center(center)
 {
-    glm::vec2 center = (topLeft + botRight) / 2.f;
-    glm::vec2 radius = center - topLeft;
-    return BoundedRect(center, radius);
+    vertices.push_back(center - radius);
+    vertices.push_back({ center.x + radius.x, center.y - radius.y });
+    vertices.push_back(center + radius);
+    vertices.push_back({ center.x - radius.x, center.y + radius.y });
+    calcNormals();
 }
 
-void BoundedRect::translate(glm::vec2 dir)
+bool OBB::isColliding(const OBB& that) const
+{
+    auto testNormals = [this, &that](auto normals) {
+        for (auto& normal : normals)
+        {
+            auto p1 = this->project(normal);
+            auto p2 = that.project(normal);
+            if (p1.second < p2.first || p2.second < p1.first)
+                return false;
+        }
+        return true;
+    };
+    
+    return testNormals(this->normals) && testNormals(that.normals);
+}
+
+Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
+{
+    Sweep sweep;
+
+    if (dir.x == 0 && dir.y == 0)
+    {
+        sweep.pos = dynamicObj.center;
+        sweep.t = isColliding(dynamicObj) ? 0.f : 1.f;
+        return sweep;
+    }
+
+    OBB futureObj = dynamicObj;
+    futureObj.translate(dir);
+    if (!isColliding(futureObj))
+    {
+        sweep.pos = futureObj.center;
+        sweep.t = 0.f;
+        return sweep;
+    }
+    
+    float start = 0;
+    float end = 1;
+    while (end - start > epsilon)
+    {
+        float mid = (start + end) / 2;
+        futureObj = dynamicObj;
+        futureObj.translate(dir * mid);
+        if (isColliding(futureObj))
+        {
+            end = mid;
+        }
+        else
+        {
+            start = mid;
+        }
+    }
+    sweep.t = (start + end) / 2 - epsilon;
+    sweep.pos = dynamicObj.center + dir * sweep.t;
+    return sweep;
+}
+
+void OBB::rotate(float radians)
+{
+    for (auto& v : vertices)
+    {
+        v = center + glm::rotate(v - center, radians);
+    }
+    calcNormals();
+}
+
+void OBB::translate(glm::vec2 dir)
 {
     center += dir;
-    boundingBox.center += dir;
+    for (auto& v : vertices)
+    {
+        v += dir;
+    }
+}
+
+void OBB::calcNormals()
+{
+    for (int i = 0; i < vertices.size(); ++i)
+    {
+        auto edge = vertices[(i + 1) % vertices.size()] - vertices[i];
+        auto perp = glm::vec2{ edge.y, -edge.x };
+        normals.push_back(glm::normalize(perp));
+    }
+}
+
+std::pair<float, float> OBB::project(glm::vec2 axis) const
+{
+    auto projection = glm::dot(vertices[0], axis);
+    auto result = std::make_pair(projection, projection);
+    for (int i = 1; i < vertices.size(); ++i)
+    {
+        projection = glm::dot(vertices[i], axis);
+        result.first = std::min(result.first, projection);
+        result.second = std::max(result.second, projection);
+    }
+    return result;
 }
