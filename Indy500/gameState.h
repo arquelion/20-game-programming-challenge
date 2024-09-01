@@ -3,7 +3,7 @@
 
 #include "car.h"
 
-#include "arena.h"
+#include "track.h"
 #include "clock.h"
 #include "scoreboard.h"
 #include "textBox.h"
@@ -26,7 +26,7 @@ public:
     void draw() const;
 
     // Game elements
-    std::shared_ptr<Arena> arena_;
+    std::shared_ptr<Track> track_;
     std::shared_ptr<Scoreboard> scoreboard_;
     std::vector<std::shared_ptr<Car>> cars_;
 
@@ -42,6 +42,7 @@ private:
         PLAY,
     } levelState;
 
+    int32_t playerIndex = 0;
     int32_t currentLevel = 1;
 
     Clock::time_point transitionTime_;

@@ -73,6 +73,3 @@ void BoundedRect::translate(glm::vec2 dir)
     center += dir;
     boundingBox.center += dir;
 }
-
-// TODOs:
-// when to block rotation if rotation would result in bounding box collisions? offset?

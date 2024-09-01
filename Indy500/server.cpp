@@ -132,8 +132,12 @@ void TcpServer::startReceive(ClientContext* clientContext)
 
 void TcpServer::startListeningToPlayers()
 {
+    Car defaultCar;
+    defaultCar.lapStartTime = clock_.now();
+    defaultCar.lapDuration = defaultCar.lapDuration.zero();
+
     cars_.clear();
-    cars_.resize(players_.size());
+    cars_.resize(players_.size(), defaultCar);
     for (auto& player : players_)
     {
         startReceive(player.get());
@@ -142,8 +146,28 @@ void TcpServer::startListeningToPlayers()
 
 void TcpServer::prepareGame()
 {
-    OBB block = { {10, 10}, {4, 4} };
-    arena_.collideables.push_back(block);
+    OBB block = { {0, 0}, {50, 40} };
+    trackData.collideables.push_back(block);
+
+    trackData.startingLine.center = { 30, 30 };
+    trackData.dir = TrackData::Direction::COUNTERCLOCKWISE;
+
+    auto numMarkers = 3;
+    Radians increment = glm::two_pi<float>() / numMarkers;
+    if (trackData.dir == TrackData::Direction::CLOCKWISE)
+    {
+        increment *= -1;
+    }
+
+    for (int i = 0; i < numMarkers; ++i)
+    {
+        auto center = trackData.startingLine.center;
+        std::vector<glm::vec2> vertices = { center };
+        auto angle = trackData.startingLine.angle + increment * i;
+        auto markerDirHat = glm::vec2(cos(angle), -sin(angle));
+        vertices.push_back(center + markerDirHat * 100.f);
+        trackData.lapMarkers.push_back(OBB(center, vertices));
+    }
 
     NetCommand level, ready;
     level.type = NetCommand::CommandType::LEVEL_LAYOUT;
@@ -182,6 +206,8 @@ void TcpServer::sendUpdate(ClientContext* player)
 
 void TcpServer::processObjects()
 {
+    auto now = clock_.now();
+
     for (auto& car : cars_)
     {
         auto heading = car.object.renderObj.heading;
@@ -191,6 +217,7 @@ void TcpServer::processObjects()
         glm::vec2 sideUnit{ sin(heading), -cos(heading) };
         velocity = 0.99f * glm::dot(headUnit, velocity) * headUnit
             + 0.90f * glm::dot(sideUnit, velocity) * sideUnit;
+
         auto dir = velocity * (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
         auto intersect = checkForIntersect(car, dir);
         switch (intersect.object)
@@ -199,13 +226,21 @@ void TcpServer::processObjects()
             car.object.translate(dir);
             break;
         case CollisionObject::WALL:
-            car.object.translate(intersect.closest.t * dir);
+            dir *= intersect.closest.t;
+            car.object.translate(dir);
             velocity = { 0, 0 };
             break;
         case CollisionObject::CAR:
             break;
         default:
             throw std::exception("invalid collision");
+        }
+
+        car.lapDuration = std::chrono::duration_cast<std::chrono::milliseconds>(now - car.lapStartTime);
+        auto marker = checkForProgress(car, dir); // returns std::optional
+        if (marker)
+        {
+            car.updateProgress(*marker, (int)trackData.lapMarkers.size());
         }
     }
 }
@@ -216,7 +251,7 @@ Intersect TcpServer::checkForIntersect(const Car& car, glm::vec2 dir) const
     auto nextCollisionObject = CollisionObject::NONE;
 
     // Walls
-    for (auto& wall : arena_.walls)
+    for (auto& wall : trackData.walls)
     {
         auto sweep = wall.sweepOBB(carBox, dir);
         if ((sweep.t != 1.f) && (sweep.t < closest.t))
@@ -226,7 +261,7 @@ Intersect TcpServer::checkForIntersect(const Car& car, glm::vec2 dir) const
         }
     }
 
-    for (auto& object : arena_.collideables)
+    for (auto& object : trackData.collideables)
     {
         auto sweep = object.sweepOBB(carBox, dir);
         if ((sweep.t != 1.f) && (sweep.t < closest.t))
@@ -244,6 +279,24 @@ Intersect TcpServer::checkForIntersect(const Car& car, glm::vec2 dir) const
 bool TcpServer::isIntersecting(const Car& car) const
 {
     return checkForIntersect(car, { 0, 0 }).closest.t < 1.0f;
+}
+
+std::optional<int> TcpServer::checkForProgress(const Car& car, glm::vec2 dir) const
+{
+    auto carBox = car.object.boundingBox;
+    Sweep closest;
+    auto nextCollisionObject = CollisionObject::NONE;
+
+    for (int i = 0; i < trackData.lapMarkers.size(); ++i)
+    {
+        auto sweep = trackData.lapMarkers[i].sweepOBB(carBox, dir);
+        if ((sweep.t != 1.f) && (sweep.t < closest.t))
+        {
+            return std::make_optional(i);
+        }
+    }
+
+    return std::nullopt;
 }
 
 void TcpServer::acceleratePlayer(int playerIndex, float snAccel)

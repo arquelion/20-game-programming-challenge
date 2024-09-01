@@ -155,7 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="arena.h" />
+    <ClInclude Include="track.h" />
     <ClInclude Include="car.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="game.h" />
@@ -170,7 +170,7 @@
     <ClInclude Include="server.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="arena.cpp" />
+    <ClCompile Include="track.cpp" />
     <ClCompile Include="car.cpp" />
     <ClCompile Include="gameState.cpp" />
     <ClCompile Include="main.cpp" />

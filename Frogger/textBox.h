@@ -53,8 +53,6 @@ public:
 
     void draw() const
     {
-        auto tempMatrices = ci::gl::ScopedMatrices();
-        ci::gl::setMatricesWindow(ci::gl::getViewport().second);
         ci::gl::drawStringCentered(text, view.getScreenVec2(center), color, font);
     }
 

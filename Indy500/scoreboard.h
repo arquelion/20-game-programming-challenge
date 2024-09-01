@@ -15,7 +15,7 @@ public:
     int getScore() const { return score; }
     void incrementScore();
 
-    void update();
+    void update(std::chrono::milliseconds lapTime, int highestLap);
     void reset();
     void draw() const;
 
@@ -23,17 +23,14 @@ private:
     float fontSize = 10.f;
     ci::Color color = ci::Color(0.5f, 0.5f, 0.5f);
 
-    glm::vec2 scorePos{ 60, 3 };
-    glm::vec2 timerPos{ 120, 153 };
-    ci::Rectf timerBar{ {20, 155}, {110, 160} };
+    glm::vec2 scorePos{ -50, -65 };
+    glm::vec2 timerPos{ 30, -65 };
 
     ::TextBox scoreText{ fontSize, scorePos };
     ::TextBox timerText{ fontSize, timerPos };
 
     int score = 0;
+    int lap = 0;
 
     void updateText();
-
-    boost::asio::io_context context;
-    boost::asio::ip::tcp::resolver aaaaa;
 };

@@ -36,7 +36,7 @@
     <ClInclude Include="game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="arena.h">
+    <ClInclude Include="track.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scoreboard.h">
@@ -62,7 +62,7 @@
     <ClCompile Include="gameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="arena.cpp">
+    <ClCompile Include="track.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scoreboard.cpp">

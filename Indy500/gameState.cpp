@@ -4,8 +4,8 @@
 
 void GameState::init()
 {
-    arena_ = std::make_shared<Arena>();
-    //scoreboard_ = std::make_shared<Scoreboard>();
+    track_ = std::make_shared<Track>();
+    scoreboard_ = std::make_shared<Scoreboard>();
     cars_.push_back(std::make_shared<Car>());
     for (auto& car : cars_)
     {
@@ -15,7 +15,7 @@ void GameState::init()
 
 void GameState::newGame()
 {
-    arena_->loadLevel(0);
+    track_->loadLevel(0);
 
     client_ = TcpConnection::connect(ioContext_, "localhost");
     NetCommand level, ready;
@@ -53,12 +53,13 @@ void GameState::rotate(int player, float snRotation)
 void GameState::update(float deltaSec)
 {
     ioContext_.poll();
+    scoreboard_->update(cars_[playerIndex]->lapDuration, cars_[playerIndex]->highestLap);
 }
 
 void GameState::draw() const
 {
-    arena_->draw();
-    //scoreboard_->draw();
+    track_->draw();
+    scoreboard_->draw();
     for (auto& car : cars_)
     {
         car->draw();
@@ -100,7 +101,7 @@ void GameState::prepareGame(NetCommand& cmd)
             {
             case NetCommand::CommandType::LEVEL_LAYOUT:
                 currentLevel = cmd.number;
-                arena_->loadLevel(currentLevel);
+                track_->loadLevel(currentLevel);
                 break;
             case NetCommand::CommandType::GAME_PREP:
                 break;
@@ -110,8 +111,3 @@ void GameState::prepareGame(NetCommand& cmd)
         }
     });
 }
-
-// TODOs:
-// More terrain
-// Scoreboard
-// Lap Detection

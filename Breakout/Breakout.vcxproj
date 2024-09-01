@@ -160,6 +160,7 @@
     <ClInclude Include="playMode.h" />
     <ClInclude Include="powerup.h" />
     <ClInclude Include="scoreboard.h" />
+    <ClInclude Include="textBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="arena.cpp" />

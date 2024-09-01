@@ -2,8 +2,8 @@
 class TcpConnection;
 class TcpServer;
 
-#include "arena.h"
 #include "car.h"
+#include "track.h"
 
 #include "clock.h"
 #include "collision.h"
@@ -17,9 +17,8 @@ struct NetCommand
 
         LEVEL_LAYOUT,
         GAME_PREP,
-    };
+    } type;
 
-    CommandType type;
     uint32_t dataLength;
 
     union
@@ -102,8 +101,10 @@ private:
     void runGame();
     void sendUpdate(ClientContext* player);
     void processObjects();
+
     Intersect checkForIntersect(const Car& car, glm::vec2 dir) const;
     bool isIntersecting(const Car& car) const;
+    std::optional<int> checkForProgress(const Car& car, glm::vec2 dir) const;
 
     void acceleratePlayer(int playerIndex, float snAccel);
     void rotatePlayer(int playerIndex, float snRotation);
@@ -117,5 +118,5 @@ private:
 
     std::vector<std::unique_ptr<ClientContext>> players_;
     std::vector<Car> cars_;
-    ArenaData arena_;
+    TrackData trackData;
 };

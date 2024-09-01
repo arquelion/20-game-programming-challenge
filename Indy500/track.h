@@ -1,5 +1,5 @@
 #pragma once
-class Arena;
+class Track;
 
 #include "car.h"
 
@@ -7,8 +7,21 @@ class Arena;
 #include "intersection.h"
 #include "object2D.h"
 
-struct ArenaData
+struct TrackData
 {
+    enum class Direction
+    {
+        CLOCKWISE,
+        COUNTERCLOCKWISE,
+    } dir;
+
+    std::vector<OBB> lapMarkers;
+    struct
+    {
+        glm::vec2 center = { 0, 0 };
+        Radians angle = 0.f;
+    } startingLine;
+
     ci::Rectf playArea{ {-82.5, -70}, {82.5, 70} };
     std::array<OBB, 4> walls{ {
         {glm::vec2(0, -75), glm::vec2(82.5, 5)},
@@ -19,17 +32,17 @@ struct ArenaData
     std::vector<OBB> collideables;
 };
 
-class Arena
+class Track
 {
 public:
-    Arena();
+    Track();
 
     void loadLevel(int level);
 
     void update(float deltaSec);
     void draw() const;
 
-    ArenaData data;
+    TrackData data;
 
 private:
     friend class GameState;
