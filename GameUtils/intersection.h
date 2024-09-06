@@ -63,8 +63,9 @@ public:
     OBB(glm::vec2 center, glm::vec2 radius);
 
     bool isColliding(const OBB& that) const;
-
     Sweep sweepOBB(const OBB& dynamicObj, glm::vec2 dir = { 0, 0 }) const;
+    Sweep sweepOBBImpl(const OBB& dynamicObj, glm::vec2 dir) const;
+    glm::vec2 support(const OBB& that, glm::vec2 dir) const;
 
     void rotate(float radians);
     void translate(glm::vec2 dir);
@@ -76,6 +77,8 @@ public:
 private:
     void calcNormals();
     std::pair<float, float> project(glm::vec2 axis) const;
+
+    glm::vec2 findFurthestPoint(glm::vec2 dir) const;
 };
 
 namespace std

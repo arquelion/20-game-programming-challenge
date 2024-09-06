@@ -1,4 +1,5 @@
 #include "intersection.h"
+#include "gjk.h"
 
 std::optional<Hit> AABB::intersectPoint(glm::vec2 point) const
 {
@@ -108,7 +109,7 @@ Sweep AABB::sweepAABB(AABB object, glm::vec2 dir) const
         sweep.t = 1.f;
     }
 
-    return sweep;
+return sweep;
 }
 
 Sweep AABB::sweepInto(std::vector<AABB> objects, glm::vec2 dir) const
@@ -155,11 +156,11 @@ bool OBB::isColliding(const OBB& that) const
         }
         return true;
     };
-    
+
     return testNormals(this->normals) && testNormals(that.normals);
 }
 
-Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
+Sweep OBB::sweepOBBImpl(const OBB& dynamicObj, glm::vec2 dir) const
 {
     Sweep sweep;
 
@@ -178,7 +179,7 @@ Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
         sweep.t = 1.f;
         return sweep;
     }
-    
+
     float start = 0;
     float end = 1;
     while (end - start > epsilon)
@@ -197,6 +198,19 @@ Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
     }
     sweep.t = (start + end) / 2 - epsilon;
     sweep.pos = dynamicObj.center + dir * sweep.t;
+    return sweep;
+}
+
+Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
+{
+    auto sweep = sweepOBBImpl(dynamicObj, dir);
+
+    bool isCollision = GJK(*this, dynamicObj);
+
+    if ((sweep.t != 1.f) != isCollision)
+    {
+        throw std::exception("someone screwed up their math");
+    }
     return sweep;
 }
 
@@ -239,4 +253,25 @@ std::pair<float, float> OBB::project(glm::vec2 axis) const
         result.second = std::max(result.second, projection);
     }
     return result;
+}
+
+glm::vec2 OBB::findFurthestPoint(glm::vec2 dir) const
+{
+    glm::vec2 maxPoint;
+    float maxDist = -FLT_MAX;
+    for (auto vertex : vertices)
+    {
+        float dist = glm::dot(vertex, dir);
+        if (dist > maxDist)
+        {
+            maxDist = dist;
+            maxPoint = vertex;
+        }
+    }
+    return maxPoint;
+}
+
+glm::vec2 OBB::support(const OBB& that, glm::vec2 dir) const
+{
+    return findFurthestPoint(dir) - that.findFurthestPoint(-dir);
 }
