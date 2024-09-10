@@ -1,5 +1,6 @@
-#include "intersection.h"
+#include "epa.h"
 #include "gjk.h"
+#include "intersection.h"
 
 std::optional<Hit> AABB::intersectPoint(glm::vec2 point) const
 {
@@ -205,12 +206,28 @@ Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
 {
     auto sweep = sweepOBBImpl(dynamicObj, dir);
 
-    bool isCollision = GJK(*this, dynamicObj);
+    auto futureObj = dynamicObj;
+    futureObj.translate(dir);
+    auto isCollision = GJK(*this, futureObj);
 
-    if ((sweep.t != 1.f) != isCollision)
+    if ((sweep.t != 1.f) != isCollision.has_value())
     {
         throw std::exception("someone screwed up their math");
     }
+
+    if (isCollision)
+    {
+        auto& simplex = isCollision.value();
+        std::vector<glm::vec2> polytope;
+        for (int i = 0; i < simplex.size(); ++i)
+        {
+            polytope.push_back(glm::vec2{ simplex[i].x, simplex[i].y });
+        }
+        auto uncollidingDir = EPA(polytope, *this, dynamicObj);
+        sweep.hit = std::make_optional<Hit>();
+        sweep.hit->delta = uncollidingDir;
+    }
+
     return sweep;
 }
 

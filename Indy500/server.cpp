@@ -166,6 +166,7 @@ void TcpServer::prepareGame()
         auto angle = trackData.startingLine.angle + increment * i;
         auto markerDirHat = glm::vec2(cos(angle), -sin(angle));
         vertices.push_back(center + markerDirHat * 100.f);
+        vertices.push_back(center + epsilon * glm::vec2(markerDirHat.y, -markerDirHat.x));
         trackData.lapMarkers.push_back(OBB(center, vertices));
     }
 
@@ -310,11 +311,12 @@ void TcpServer::rotatePlayer(int playerIndex, float snRotation)
 {
     auto& car = cars_[playerIndex];
     assert(!isIntersecting(car));
-    auto futureCar{ car };
     Radians delta = snRotation * car.maxRotation;
-    futureCar.object.rotate(delta);
-    if (!isIntersecting(futureCar)) {
-        car.object.boundingBox = futureCar.object.boundingBox;
-        car.object.renderObj.heading += delta;
+    car.object.rotate(delta);
+
+    auto intersect = checkForIntersect(car, glm::vec2(0));
+    if (intersect.closest.hit) {
+        car.object.translate(intersect.closest.hit->delta);
     }
+    car.object.renderObj.heading += delta;
 }

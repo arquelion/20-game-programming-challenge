@@ -39,5 +39,5 @@ private:
 	int m_size;
 };
 
-using Simplex2D = Simplex<glm::vec2, 3>;
+using Simplex2D = Simplex<glm::vec3, 3>;
 using Simplex3D = Simplex<glm::vec3, 4>;

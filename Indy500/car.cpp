@@ -29,9 +29,9 @@ void Car::loadTexture()
     Surface car{ 16, 10, true };
     object.renderObj.color = Color(0.3f, 0.3f, 1.0f);
 
-    car.copyFrom(bitmap, area, glm::ivec2(0, -5));
-    ip::flipHorizontal(&car);
-    object.renderObj.texture = gl::Texture2d::create(car);
+    //car.copyFrom(bitmap, area, glm::ivec2(0, -5));
+    //ip::flipHorizontal(&car);
+    //object.renderObj.texture = gl::Texture2d::create(car);
 }
 
 void Car::updateProgress(int marker, int totalMarkers)

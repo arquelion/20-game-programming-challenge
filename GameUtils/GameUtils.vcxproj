@@ -22,6 +22,7 @@
     <ClInclude Include="animation.h" />
     <ClInclude Include="clock.h" />
     <ClInclude Include="collisionObjects.h" />
+    <ClInclude Include="epa.h" />
     <ClInclude Include="gjk.h" />
     <ClInclude Include="simplex.h" />
     <ClInclude Include="intersection.h" />

@@ -5,22 +5,27 @@
 #include "cinder/gl/gl.h"
 
 // Source: https://winter.dev/articles/gjk-algorithm
-bool isSameDirection(const glm::vec2& direction, const glm::vec2& ao)
+bool isSameDirection(const glm::vec3& direction, const glm::vec3& ao)
 {
-	return dot(direction, ao) > 0;
+	return glm::dot(direction, ao) > 0;
 }
 
-bool Line(Simplex2D& points, glm::vec2& direction)
+bool Line(Simplex2D& points, glm::vec3& direction)
 {
-	glm::vec2 a = points[0];
-	glm::vec2 b = points[1];
+	glm::vec3 a = points[0];
+	glm::vec3 b = points[1];
 
-	glm::vec2 ab = b - a;
-	glm::vec2 ao = -a;
+	glm::vec3 ab = b - a;
+	glm::vec3 ao = -a;
 
 	if (isSameDirection(ab, ao))
 	{
-		direction = ao;
+		direction = glm::cross(glm::cross(ab, ao), ab);
+		/*direction = {ab.y, -ab.x};
+		if (!isSameDirection(direction, ao))
+		{
+			direction *= -1;
+		}*/
 	}
 	else
 	{
@@ -31,28 +36,29 @@ bool Line(Simplex2D& points, glm::vec2& direction)
 	return false;
 }
 
-bool Triangle(Simplex2D& points, glm::vec2& direction)
+bool Triangle(Simplex2D& points, glm::vec3& direction)
 {
-	glm::vec2 a = points[0];
-	glm::vec2 b = points[1];
-	glm::vec2 c = points[2];
+	glm::vec3 a = points[0];
+	glm::vec3 b = points[1];
+	glm::vec3 c = points[2];
 
-	glm::vec2 ab = b - a;
-	glm::vec2 ac = c - a;
-	glm::vec2 ao = -a;
+	glm::vec3 ab = b - a;
+	glm::vec3 ac = c - a;
+	glm::vec3 ao = -a;
 
-	glm::vec2 abc = glm::vec2(-ac.y, ac.x);
-	if (isSameDirection(abc, ab))
+	glm::vec3 abc = glm::cross(ab, ac);
+	//glm::vec3 acPerp = glm::vec3(-ac.y, ac.x);
+	/*if (isSameDirection(acPerp, ab))
 	{
-		abc *= -1;
-	}
+		acPerp *= -1;
+	}*/
 
-	if (isSameDirection(abc, ao))
+	if (isSameDirection(glm::cross(abc, ac), ao))
 	{
 		if (isSameDirection(ac, ao))
 		{
 			points = { a, c };
-			direction = ao;
+			direction = glm::cross(glm::cross(ac, ao), ac);
 		}
 		else
 		{
@@ -61,17 +67,29 @@ bool Triangle(Simplex2D& points, glm::vec2& direction)
 	}
 	else
 	{
-		if (!isSameDirection(ac, ao))
+		if (isSameDirection(glm::cross(ab, abc), ao))
 		{
 			return Line(points = { a, b }, direction);
 		}
-		return true;
+		else
+		{
+			return true;
+			/*if (isSameDirection(abc, ao))
+			{
+				direction = abc;
+			}
+			else
+			{
+				points = { a, c, b };
+				direction = -abc;
+			}*/
+		}
 	}
 
 	return false;
 }
 
-bool NextSimplex2D(Simplex2D& points, glm::vec2& direction)
+bool NextSimplex2D(Simplex2D& points, glm::vec3& direction)
 {
 	switch (points.size()) {
 	case 2: return Line(points, direction);
@@ -82,29 +100,29 @@ bool NextSimplex2D(Simplex2D& points, glm::vec2& direction)
 	return false;
 }
 
-bool GJK(const OBB& colliderA, const OBB& colliderB)
+std::optional<Simplex2D> GJK(const OBB& colliderA, const OBB& colliderB)
 {
 	// Get initial support point in any direction
-	auto support = colliderA.support(colliderB, glm::vec2(1, 0));
+	glm::vec3 support = { colliderA.support(colliderB, glm::vec2(1, 0)), 0 };
 
 	// Simplex2D is an array of points, max count is 4
 	Simplex2D points;
 	points.push_front(support);
 
 	// New direction is towards the origin
-	auto direction = -support;
+	glm::vec3 direction = -support;
 
 	while (true) {
-		support = colliderA.support(colliderB, direction);
+		support = { colliderA.support(colliderB, direction), 0 };
 
 		if (dot(support, direction) <= 0) {
-			return false; // no collision
+			return std::nullopt; // no collision
 		}
 
 		points.push_front(support);
 
 		if (NextSimplex2D(points, direction)) {
-			return true;
+			return std::make_optional(points);
 		}
 	}
 }
