@@ -318,5 +318,4 @@ void TcpServer::rotatePlayer(int playerIndex, float snRotation)
     if (intersect.closest.hit) {
         car.object.translate(intersect.closest.hit->delta);
     }
-    car.object.renderObj.heading += delta;
 }

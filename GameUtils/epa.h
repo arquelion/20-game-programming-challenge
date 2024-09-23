@@ -17,8 +17,8 @@ glm::vec2 EPA(std::vector<glm::vec2> polytope, const OBB& shapeA, const OBB& sha
         {
             int j = (i + 1) % polytope.size();
             
-            auto vertexI = glm::vec2(polytope[i].x, polytope[i].y);
-            auto vertexJ = glm::vec2(polytope[j].x, polytope[j].y);
+            auto vertexI = polytope[i];
+            auto vertexJ = polytope[j];
             auto ij = vertexJ - vertexI;
 
             auto normal = glm::normalize(glm::vec2(ij.y, -ij.x));

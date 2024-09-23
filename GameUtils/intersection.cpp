@@ -223,7 +223,7 @@ Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
         {
             polytope.push_back(glm::vec2{ simplex[i].x, simplex[i].y });
         }
-        auto uncollidingDir = EPA(polytope, *this, dynamicObj);
+        auto uncollidingDir = EPA(polytope, *this, futureObj);
         sweep.hit = std::make_optional<Hit>();
         sweep.hit->delta = uncollidingDir;
     }
