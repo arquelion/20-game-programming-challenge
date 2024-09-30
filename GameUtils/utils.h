@@ -42,3 +42,8 @@ T getRandomNum()
 
     return distribution(generator);
 }
+
+inline glm::vec2 getUnitVector(Radians rad)
+{
+    return glm::vec2(cos(rad), sin(rad));
+}

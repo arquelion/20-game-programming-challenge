@@ -1,6 +1,7 @@
 #include "precomp.h"
 
 #include "track.h"
+#include "view.h"
 
 using namespace ci;
 
@@ -14,12 +15,12 @@ void Track::loadLevel(int level)
     terrain.clear();
     data.collideables.clear();
 
-    Object2D block;
-    block.color = Color::gray(0.5f);
-    block.sprite.setCenter({ 0, 0 });
-    block.sprite.setRadius({ 50, 40 });
+    Collideable2D block({ 0, 0 }, { 50, 40 });
+    block.renderObj.color = Color::gray(0.5f);
     terrain.push_back(block);
-    //data.collideables.push_back(block.sprite.getBoundingBox());
+    data.collideables.push_back(block.boundingBox);
+
+    data.startingLine.center = { 30, 30 };
 }
 
 void Track::update(float deltaSec)
@@ -29,6 +30,8 @@ void Track::update(float deltaSec)
 
 void Track::draw() const
 {
+    auto startLine = data.startingLine;
+    gl::drawLine(startLine.center, startLine.center + getUnitVector(startLine.angle) * glm::l1Norm(glm::vec3(view.getSize(), 0)));
     for (auto& object : terrain)
     {
         object.draw();

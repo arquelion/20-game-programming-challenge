@@ -251,6 +251,7 @@ void OBB::translate(glm::vec2 dir)
 
 void OBB::calcNormals()
 {
+    normals.clear();
     for (int i = 0; i < vertices.size(); ++i)
     {
         auto edge = vertices[(i + 1) % vertices.size()] - vertices[i];

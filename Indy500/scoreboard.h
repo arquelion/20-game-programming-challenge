@@ -2,7 +2,6 @@
 class Scoreboard;
 enum class ScoreSource;
 
-#include "game.h"
 #include "textBox.h"
 
 #include "boost/asio.hpp"

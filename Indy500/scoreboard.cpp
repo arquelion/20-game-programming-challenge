@@ -1,5 +1,7 @@
 #include "precomp.h"
 
+#include "gameState.h"
+
 #include "scoreboard.h"
 #include "utils.h"
 #include "view.h"
@@ -25,8 +27,9 @@ void Scoreboard::update(std::chrono::milliseconds lapTime, int highestLap)
     scoreText.setText(buf);
     scoreText.update();
 
-    sprintf_s(buf, "Lap time: %2d:%02lld.%03lld",
-        duration_cast<minutes>(lapTime).count(), duration_cast<seconds>(lapTime).count() % 60, lapTime.count() % 1000);
+    //sprintf_s(buf, "Lap time: %2d:%02lld.%03lld",
+    //    duration_cast<minutes>(lapTime).count(), duration_cast<seconds>(lapTime).count() % 60, lapTime.count() % 1000);
+    sprintf_s(buf, "Last lap marker: %d", game.cars_[0]->currentMarker);
     timerText.setText(buf);
     timerText.update();
 }

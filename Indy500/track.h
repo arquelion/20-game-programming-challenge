@@ -46,5 +46,5 @@ public:
 
 private:
     friend class GameState;
-    std::vector<Object2D> terrain;
+    std::vector<Collideable2D> terrain;
 };
