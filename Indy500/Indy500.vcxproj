@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="botCar.h" />
     <ClInclude Include="track.h" />
     <ClInclude Include="car.h" />
     <ClInclude Include="collision.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="server.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="botCar.cpp" />
     <ClCompile Include="track.cpp" />
     <ClCompile Include="car.cpp" />
     <ClCompile Include="gameState.cpp" />

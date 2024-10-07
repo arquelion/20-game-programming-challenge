@@ -16,7 +16,7 @@ struct NetCommand
         ROTATE,
 
         LEVEL_LAYOUT,
-        GAME_PREP,
+        GAME_PREP, // number is player count
     } type;
 
     uint32_t dataLength;
@@ -80,6 +80,8 @@ public:
         thread_.detach();
     }
 
+    void kill() { thread_.~thread(); }
+
     void update();
 
 private:
@@ -96,6 +98,7 @@ private:
 
     void startReceive(ClientContext* clientContext);
     void startListeningToPlayers();
+    void startBots();
 
     void prepareGame();
     void runGame();
@@ -118,5 +121,6 @@ private:
 
     std::vector<std::unique_ptr<ClientContext>> players_;
     std::vector<Car> cars_;
+    std::vector<std::thread> bots_;
     TrackData trackData;
 };

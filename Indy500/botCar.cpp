@@ -1,20 +1,22 @@
 #include "precomp.h"
 
-#include "gameState.h"
+#include "botCar.h"
 
-void GameState::init()
+void BotCar::run()
 {
-    track_ = std::make_shared<Track>();
-    scoreboard_ = std::make_shared<Scoreboard>();
-    cars_.push_back(std::make_shared<Car>());
-    for (auto& car : cars_)
+    while (isRunning_)
     {
-        car->loadTexture();
+        while (ioContext_.poll() > 0);
+        accelerate(snAccel);
+        rotate(snRotation);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
-void GameState::newGame()
+void BotCar::newGame()
 {
+    track_ = std::make_shared<Track>();
+    cars_.push_back(std::make_shared<Car>());
     track_->loadLevel(0);
 
     client_ = TcpConnection::connect(ioContext_, "localhost");
@@ -25,53 +27,27 @@ void GameState::newGame()
     asyncGetServerUpdate();
 }
 
-bool GameState::isGameOver() const
-{
-    return false;
-}
-
-void GameState::accelerate(float snAccel)
+void BotCar::accelerate(float snAccel)
 {
     NetCommand cmd;
     cmd.dataLength = 0;
     cmd.type = NetCommand::CommandType::ACCELERATE;
     cmd.float32 = snAccel;
     client_->write(cmd);
-    ioContext_.run();
+    ioContext_.poll();
 }
 
-void GameState::rotate(float snRotation)
+void BotCar::rotate(float snRotation)
 {
     NetCommand cmd;
     cmd.dataLength = 0;
     cmd.type = NetCommand::CommandType::ROTATE;
     cmd.float32 = snRotation;
     client_->write(cmd);
-    ioContext_.run();
-}
-
-void GameState::update(float deltaSec)
-{
     ioContext_.poll();
-    scoreboard_->update(cars_[playerIndex]->lapDuration, cars_[playerIndex]->highestLap);
 }
 
-void GameState::draw() const
-{
-    track_->draw();
-    scoreboard_->draw();
-    for (auto& car : cars_)
-    {
-        car->draw();
-    }
-}
-
-void GameState::quit()
-{
-    server_->kill();
-}
-
-void GameState::asyncGetServerUpdate()
+void BotCar::asyncGetServerUpdate()
 {
     boost::asio::async_read(client_->socket(), boost::asio::buffer(&updateData_, sizeof(updateData_)),
         [this](boost::system::error_code ec, std::size_t length)
@@ -91,7 +67,7 @@ void GameState::asyncGetServerUpdate()
     });
 }
 
-void GameState::asyncLoadLevel(NetCommand& cmd)
+void BotCar::asyncLoadLevel(NetCommand& cmd)
 {
     boost::asio::async_read(client_->socket(), boost::asio::buffer(&cmd, sizeof(cmd)),
         [this, &cmd](boost::system::error_code ec, std::size_t length)
@@ -115,4 +91,11 @@ void GameState::asyncLoadLevel(NetCommand& cmd)
             }
         }
     });
+}
+
+void botCarThread()
+{
+    BotCar bot;
+    bot.newGame();
+    bot.run();
 }

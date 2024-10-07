@@ -19,11 +19,12 @@ public:
     void newGame();
     bool isGameOver() const;
     
-    void accelerate(int player, float snAccel);
-    void rotate(int player, float snRotation);
+    void accelerate(float snAccel);
+    void rotate(float snRotation);
 
     void update(float deltaSec);
     void draw() const;
+    void quit();
 
     // Game elements
     std::shared_ptr<Track> track_;
@@ -53,6 +54,6 @@ private:
 
     GameUpdateData updateData_;
 
-    void startReceive();
-    void prepareGame(NetCommand& cmd);
+    void asyncGetServerUpdate();
+    void asyncLoadLevel(NetCommand& cmd);
 };

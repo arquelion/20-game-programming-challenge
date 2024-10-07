@@ -48,6 +48,7 @@ void IndyClone::setup()
 
 void IndyClone::quit()
 {
+    game.quit();
     App::quit();
 }
 

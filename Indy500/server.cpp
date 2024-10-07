@@ -1,5 +1,6 @@
 #include "precomp.h"
 
+#include "botCar.h"
 #include "car.h"
 
 #include "server.h"
@@ -87,9 +88,10 @@ void TcpServer::handleAccept(TcpConnection::pointer newConnection, const boost::
         newConnection->start();
     }
 
-    if (players_.size() < 2)
+    if (players_.size() == 1)
     {
-        //startAccept();
+        startBots();
+        startAccept();
     }
 
     prepareGame();
@@ -142,6 +144,12 @@ void TcpServer::startListeningToPlayers()
     {
         startReceive(player.get());
     }
+}
+
+void TcpServer::startBots()
+{
+    bots_.clear();
+    bots_.emplace_back(std::thread(botCarThread));
 }
 
 void TcpServer::prepareGame()
