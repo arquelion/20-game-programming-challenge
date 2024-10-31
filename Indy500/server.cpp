@@ -114,10 +114,10 @@ void TcpServer::startReceive(ClientContext* clientContext)
                 switch (command.type)
                 {
                 case NetCommand::CommandType::ACCELERATE:
-                    acceleratePlayer(0, command.float32);
+                    acceleratePlayer(clientContext->playerIndex, command.float32);
                     break;
                 case NetCommand::CommandType::ROTATE:
-                    rotatePlayer(0, command.float32);
+                    rotatePlayer(clientContext->playerIndex, command.float32);
                     break;
                 case NetCommand::CommandType::LEVEL_LAYOUT:
 
@@ -160,6 +160,14 @@ void TcpServer::prepareGame()
     trackData.startingLine.center = { 30, 30 };
     trackData.dir = TrackData::Direction::COUNTERCLOCKWISE;
 
+    trackData.beacons.clear();
+    OBB center = { {0, 0}, {1, 1} };
+    for (int i = 0; i < 8; ++i)
+    {
+        trackData.beacons.push_back(center);
+        trackData.beacons.back().translate((65.f + ((i % 2) ? 10.f : 0.f)) * getUnitVector(Radians(- i * M_PI / 4)));
+    }
+
     auto numMarkers = 3;
     Radians increment = glm::two_pi<float>() / numMarkers;
     if (trackData.dir == TrackData::Direction::CLOCKWISE)
@@ -178,15 +186,18 @@ void TcpServer::prepareGame()
         trackData.lapMarkers.push_back(OBB(center, vertices));
     }
 
-    NetCommand level, ready;
+    NetCommand level, ready, playerIndex;
     level.type = NetCommand::CommandType::LEVEL_LAYOUT;
     level.number = 0;
     ready.type = NetCommand::CommandType::GAME_PREP;
-    ready.number = 1;
-    for (auto& player : players_)
+    ready.number = 2;
+    playerIndex.type = NetCommand::CommandType::PLAYER_INDEX;
+    for (int i = 0; i < players_.size(); ++i)
     {
-        player->client->write(level);
-        player->client->write(ready);
+        playerIndex.number = i;
+        players_[i]->client->write(level);
+        players_[i]->client->write(ready);
+        players_[i]->client->write(playerIndex);
     }
 }
 

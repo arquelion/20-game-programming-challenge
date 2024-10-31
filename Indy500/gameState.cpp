@@ -6,21 +6,15 @@ void GameState::init()
 {
     track_ = std::make_shared<Track>();
     scoreboard_ = std::make_shared<Scoreboard>();
-    cars_.push_back(std::make_shared<Car>());
-    for (auto& car : cars_)
-    {
-        car->loadTexture();
-    }
 }
 
 void GameState::newGame()
 {
-    track_->loadLevel(0);
-
     client_ = TcpConnection::connect(ioContext_, "localhost");
-    NetCommand level, ready;
+    NetCommand level, ready, index;
     asyncLoadLevel(level);
     asyncLoadLevel(ready);
+    asyncLoadLevel(index);
     ioContext_.run();
     asyncGetServerUpdate();
 }
@@ -53,7 +47,7 @@ void GameState::rotate(float snRotation)
 void GameState::update(float deltaSec)
 {
     ioContext_.poll();
-    scoreboard_->update(cars_[playerIndex]->lapDuration, cars_[playerIndex]->highestLap);
+    scoreboard_->update(cars_[playerIndex].lapDuration, cars_[playerIndex].highestLap);
 }
 
 void GameState::draw() const
@@ -62,13 +56,24 @@ void GameState::draw() const
     scoreboard_->draw();
     for (auto& car : cars_)
     {
-        car->draw();
+        car.draw();
     }
 }
 
 void GameState::quit()
 {
     server_->kill();
+}
+
+void GameState::handleGamePrep(int numCars)
+{
+    cars_.clear();
+    for (int i = 0; i < numCars; ++i)
+    {
+        Car car;
+        car.loadTexture();
+        cars_.push_back(car);
+    }
 }
 
 void GameState::asyncGetServerUpdate()
@@ -84,7 +89,7 @@ void GameState::asyncGetServerUpdate()
         {
             for (int i = 0; i < updateData_.cars.size() && i < cars_.size(); ++i)
             {
-                *cars_[i] = updateData_.cars[i];
+                cars_[i] = updateData_.cars[i];
             }
         }
         asyncGetServerUpdate();
@@ -109,6 +114,10 @@ void GameState::asyncLoadLevel(NetCommand& cmd)
                 track_->loadLevel(currentLevel);
                 break;
             case NetCommand::CommandType::GAME_PREP:
+                handleGamePrep(cmd.number);
+                break;
+            case NetCommand::CommandType::PLAYER_INDEX:
+                playerIndex = cmd.number;
                 break;
             default:
                 throw std::exception("invalid command");

@@ -62,10 +62,13 @@ public:
     OBB(glm::vec2 center, std::vector<glm::vec2> vertices);
     OBB(glm::vec2 center, glm::vec2 radius);
 
+    glm::vec2 support(const OBB& that, glm::vec2 dir) const;
     bool isColliding(const OBB& that) const;
+
+    std::optional<Hit> intersectSegment(glm::vec2 origin, glm::vec2 dir) const;
+
     Sweep sweepOBB(const OBB& dynamicObj, glm::vec2 dir = { 0, 0 }) const;
     Sweep sweepOBBImpl(const OBB& dynamicObj, glm::vec2 dir) const;
-    glm::vec2 support(const OBB& that, glm::vec2 dir) const;
 
     void rotate(float radians);
     void translate(glm::vec2 dir);

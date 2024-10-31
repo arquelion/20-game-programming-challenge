@@ -30,6 +30,7 @@ struct TrackData
         {glm::vec2(87.5, 0), glm::vec2(5, 70)}
     } };
     std::vector<OBB> collideables;
+    std::vector<OBB> beacons;
 };
 
 class Track

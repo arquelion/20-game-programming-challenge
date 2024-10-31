@@ -161,6 +161,12 @@ bool OBB::isColliding(const OBB& that) const
     return testNormals(this->normals) && testNormals(that.normals);
 }
 
+std::optional<Hit> OBB::intersectSegment(glm::vec2 origin, glm::vec2 dir) const
+{
+    // TODO
+    return std::optional<Hit>();
+}
+
 Sweep OBB::sweepOBBImpl(const OBB& dynamicObj, glm::vec2 dir) const
 {
     Sweep sweep;

@@ -17,6 +17,7 @@ struct NetCommand
 
         LEVEL_LAYOUT,
         GAME_PREP, // number is player count
+        PLAYER_INDEX,
     } type;
 
     uint32_t dataLength;
@@ -89,7 +90,7 @@ private:
     {
         TcpConnection::pointer client;
         NetCommand command;
-        int index;
+        int playerIndex;
     };
 
     void startAccept();

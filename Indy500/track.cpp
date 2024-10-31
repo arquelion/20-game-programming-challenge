@@ -21,6 +21,14 @@ void Track::loadLevel(int level)
     data.collideables.push_back(block.boundingBox);
 
     data.startingLine.center = { 30, 30 };
+
+    data.beacons.clear();
+    OBB center = { {0, 0}, {1, 1} };
+    for (int i = 0; i < 8; ++i)
+    {
+        data.beacons.push_back(center);
+        data.beacons.back().translate((65.f + ((i % 2) ? 10.f : 0.f)) * getUnitVector(-i * M_PI / 4));
+    }
 }
 
 void Track::update(float deltaSec)

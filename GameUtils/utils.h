@@ -47,3 +47,19 @@ inline glm::vec2 getUnitVector(Radians rad)
 {
     return glm::vec2(cos(rad), sin(rad));
 }
+
+inline glm::vec2 norm(glm::vec2 u)
+{
+    return glm::vec2(-u.y, u.x) / glm::length(u);
+}
+
+inline Radians getAngleBetweenVectors(glm::vec2 u, glm::vec2 v)
+{
+    auto cos = std::clamp(glm::dot(u, v) / (glm::length(u) * glm::length(v)), -1.f, 1.f);
+    auto angle = signum(glm::dot(norm(u), v)) * glm::acos(cos);
+    if (std::isnan(angle))
+    {
+        throw std::exception("aaaaaaa");
+    }
+    return angle;
+}

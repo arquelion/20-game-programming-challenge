@@ -7,6 +7,15 @@ void BotCar::run()
     while (isRunning_)
     {
         while (ioContext_.poll() > 0);
+        if (glm::length(track_->data.beacons[nextBeacon].center - cars_[carIndex].object.boundingBox.center) < 10.f)
+        {
+            nextBeacon = (nextBeacon + 1) % track_->data.beacons.size();
+        }
+        Radians angle = getAngleBetweenVectors(
+            getUnitVector(cars_[carIndex].object.renderObj.heading),
+            track_->data.beacons[nextBeacon].center - cars_[carIndex].object.boundingBox.center
+        );
+        snRotation = 0.7 * std::clamp((float)(angle / (M_PI / 4)), -1.f, 1.f);
         accelerate(snAccel);
         rotate(snRotation);
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -16,13 +25,13 @@ void BotCar::run()
 void BotCar::newGame()
 {
     track_ = std::make_shared<Track>();
-    cars_.push_back(std::make_shared<Car>());
     track_->loadLevel(0);
 
     client_ = TcpConnection::connect(ioContext_, "localhost");
-    NetCommand level, ready;
+    NetCommand level, ready, index;
     asyncLoadLevel(level);
     asyncLoadLevel(ready);
+    asyncLoadLevel(index);
     ioContext_.run();
     asyncGetServerUpdate();
 }
@@ -60,7 +69,7 @@ void BotCar::asyncGetServerUpdate()
         {
             for (int i = 0; i < updateData_.cars.size() && i < cars_.size(); ++i)
             {
-                *cars_[i] = updateData_.cars[i];
+                cars_[i] = updateData_.cars[i];
             }
         }
         asyncGetServerUpdate();
@@ -85,6 +94,15 @@ void BotCar::asyncLoadLevel(NetCommand& cmd)
                 track_->loadLevel(currentLevel);
                 break;
             case NetCommand::CommandType::GAME_PREP:
+                cars_.clear();
+                for (uint32_t i = 0; i < cmd.number; ++i)
+                {
+                    Car car;
+                    cars_.push_back(car);
+                }
+                break;
+            case NetCommand::CommandType::PLAYER_INDEX:
+                carIndex = cmd.number;
                 break;
             default:
                 throw std::exception("invalid command");

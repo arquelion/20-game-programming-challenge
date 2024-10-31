@@ -29,7 +29,7 @@ public:
     // Game elements
     std::shared_ptr<Track> track_;
     std::shared_ptr<Scoreboard> scoreboard_;
-    std::vector<std::shared_ptr<Car>> cars_;
+    std::vector<Car> cars_;
 
     bool isActive_ = true;
 
@@ -53,7 +53,8 @@ private:
     TcpConnection::pointer client_;
 
     GameUpdateData updateData_;
-
+    
+    void handleGamePrep(int numCars);
     void asyncGetServerUpdate();
     void asyncLoadLevel(NetCommand& cmd);
 };
