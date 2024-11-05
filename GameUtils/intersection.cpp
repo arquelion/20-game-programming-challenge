@@ -210,16 +210,16 @@ Sweep OBB::sweepOBBImpl(const OBB& dynamicObj, glm::vec2 dir) const
 
 Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
 {
-    auto sweep = sweepOBBImpl(dynamicObj, dir);
+    Sweep sweep;// = sweepOBBImpl(dynamicObj, dir);
 
     auto futureObj = dynamicObj;
     futureObj.translate(dir);
     auto isCollision = GJK(*this, futureObj);
 
-    if ((sweep.t != 1.f) != isCollision.has_value())
+    /*if ((sweep.t != 1.f) != isCollision.has_value())
     {
         throw std::exception("someone screwed up their math");
-    }
+    }*/
 
     if (isCollision)
     {
@@ -229,9 +229,19 @@ Sweep OBB::sweepOBB(const OBB& dynamicObj, glm::vec2 dir) const
         {
             polytope.push_back(glm::vec2{ simplex[i].x, simplex[i].y });
         }
-        auto uncollidingDir = EPA(polytope, *this, futureObj);
-        sweep.hit = std::make_optional<Hit>();
-        sweep.hit->delta = uncollidingDir;
+        sweep.hit = EPA(polytope, *this, futureObj);
+        auto lengthOfTravelOnTheNorm = glm::abs(glm::dot(dir, sweep.hit->normal));
+        if (lengthOfTravelOnTheNorm < epsilon) {
+            sweep.t = 0;
+        }
+        else {
+            sweep.t = std::clamp(
+                (lengthOfTravelOnTheNorm - glm::length(sweep.hit->delta)) / lengthOfTravelOnTheNorm,
+                0.f, 1.f - epsilon);
+        }
+        if (sweep.t < 0) {
+            throw std::exception("Negative time to collision");
+        }
     }
 
     return sweep;

@@ -31,7 +31,7 @@ void GameState::accelerate(float snAccel)
     cmd.type = NetCommand::CommandType::ACCELERATE;
     cmd.float32 = snAccel;
     client_->write(cmd);
-    ioContext_.run();
+    ioContext_.poll();
 }
 
 void GameState::rotate(float snRotation)
@@ -41,12 +41,12 @@ void GameState::rotate(float snRotation)
     cmd.type = NetCommand::CommandType::ROTATE;
     cmd.float32 = snRotation;
     client_->write(cmd);
-    ioContext_.run();
+    ioContext_.poll();
 }
 
 void GameState::update(float deltaSec)
 {
-    ioContext_.poll();
+    while (ioContext_.poll() > 0);
     scoreboard_->update(cars_[playerIndex].lapDuration, cars_[playerIndex].highestLap);
 }
 

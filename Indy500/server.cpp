@@ -238,7 +238,8 @@ void TcpServer::processObjects()
         velocity = 0.99f * glm::dot(headUnit, velocity) * headUnit
             + 0.90f * glm::dot(sideUnit, velocity) * sideUnit;
 
-        auto dir = velocity * (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
+        float travelTime = (float)duration_cast<std::chrono::milliseconds>(updateInterval_).count() / 1000.f;
+        auto dir = velocity * travelTime;
         auto intersect = checkForIntersect(car, dir);
         switch (intersect.object)
         {
@@ -246,18 +247,25 @@ void TcpServer::processObjects()
             car.object.translate(dir);
             break;
         case CollisionObject::WALL:
+        {
             dir *= intersect.closest.t;
             car.object.translate(dir);
-            velocity = { 0, 0 };
+            //car.object.translate(intersect.closest.hit->delta);
+            //velocity = glm::dot(velocity, norm(intersect.closest.hit->normal)) * norm(intersect.closest.hit->normal);
+            velocity = dir / travelTime;
+            velocity += intersect.closest.hit->normal;
             break;
+        }
         case CollisionObject::CAR:
             break;
         default:
             throw std::exception("invalid collision");
         }
 
+        assert(!isIntersecting(car));
+
         car.lapDuration = std::chrono::duration_cast<std::chrono::milliseconds>(now - car.lapStartTime);
-        auto marker = checkForProgress(car, dir); // returns std::optional
+        auto marker = checkForProgress(car); // returns std::optional
         if (marker)
         {
             car.updateProgress(*marker, (int)trackData.lapMarkers.size());
@@ -298,10 +306,10 @@ Intersect TcpServer::checkForIntersect(const Car& car, glm::vec2 dir) const
 
 bool TcpServer::isIntersecting(const Car& car) const
 {
-    return checkForIntersect(car, { 0, 0 }).closest.t < 1.0f;
+    return checkForIntersect(car, glm::vec2(0)).closest.t < 1.0f;
 }
 
-std::optional<int> TcpServer::checkForProgress(const Car& car, glm::vec2 dir) const
+std::optional<int> TcpServer::checkForProgress(const Car& car) const
 {
     auto carBox = car.object.boundingBox;
     Sweep closest;
@@ -309,7 +317,7 @@ std::optional<int> TcpServer::checkForProgress(const Car& car, glm::vec2 dir) co
 
     for (int i = 0; i < trackData.lapMarkers.size(); ++i)
     {
-        auto sweep = trackData.lapMarkers[i].sweepOBB(carBox, dir);
+        auto sweep = trackData.lapMarkers[i].sweepOBB(carBox, glm::vec2(0));
         if ((sweep.t != 1.f) && (sweep.t < closest.t))
         {
             return std::make_optional(i);

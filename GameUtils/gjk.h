@@ -115,7 +115,7 @@ std::optional<Simplex2D> GJK(const OBB& colliderA, const OBB& colliderB)
 	while (true) {
 		support = { colliderA.support(colliderB, direction), 0 };
 
-		if (dot(support, direction) <= 0) {
+		if (dot(support, direction) - epsilon <= 0) {
 			return std::nullopt; // no collision
 		}
 

@@ -108,7 +108,7 @@ private:
 
     Intersect checkForIntersect(const Car& car, glm::vec2 dir) const;
     bool isIntersecting(const Car& car) const;
-    std::optional<int> checkForProgress(const Car& car, glm::vec2 dir) const;
+    std::optional<int> checkForProgress(const Car& car) const;
 
     void acceleratePlayer(int playerIndex, float snAccel);
     void rotatePlayer(int playerIndex, float snRotation);

@@ -5,7 +5,7 @@
 #include "cinder/gl/gl.h"
 
 // Source: https://winter.dev/articles/epa-algorithm
-glm::vec2 EPA(std::vector<glm::vec2> polytope, const OBB& shapeA, const OBB& shapeB)
+Hit EPA(std::vector<glm::vec2> polytope, const OBB& shapeA, const OBB& shapeB)
 {
     int minIndex = 0;
     float minDistance = FLOAT_INF;
@@ -48,5 +48,8 @@ glm::vec2 EPA(std::vector<glm::vec2> polytope, const OBB& shapeA, const OBB& sha
         }
     }
 
-    return minNormal * (minDistance + epsilon);
+    Hit hit;
+    hit.normal = minNormal;
+    hit.delta = minNormal * (minDistance + epsilon);
+    return hit;
 }
